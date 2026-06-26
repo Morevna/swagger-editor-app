@@ -1,4 +1,4 @@
-import LanguageSwitcher from '@/components/language-switcher/language-switcher';
+import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
