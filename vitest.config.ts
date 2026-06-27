@@ -26,6 +26,7 @@ export default defineConfig({
         '**/types/**',
         'src/app/**',
         'src/middleware.ts',
+        'src/components/ui/**',
       ],
     },
   },
