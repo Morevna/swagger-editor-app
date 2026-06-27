@@ -7,7 +7,14 @@ import eslintPluginBetterTailwindcss from 'eslint-plugin-better-tailwindcss';
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+  globalIgnores([
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+    'coverage',
+    'playwright-report',
+  ]),
   {
     extends: [eslintPluginBetterTailwindcss.configs.recommended],
     settings: {
