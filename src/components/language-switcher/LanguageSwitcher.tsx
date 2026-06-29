@@ -1,11 +1,17 @@
 'use client';
 
+import { Globe } from 'lucide-react';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/Select';
 
-export default function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  className?: string;
+}
+
+export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
   const currentLocale = useLocale();
@@ -13,17 +19,29 @@ export default function LanguageSwitcher() {
 
   const switchLocale = (newLocale: string) => {
     const query = Object.fromEntries(searchParams.entries());
-
     router.replace({ pathname, query }, { locale: newLocale });
   };
 
   return (
-    <select value={currentLocale} onChange={(e) => switchLocale(e.target.value)}>
-      {routing.locales.map((locale) => (
-        <option key={locale} value={locale}>
-          {locale.toUpperCase()}
-        </option>
-      ))}
-    </select>
+    <Select value={currentLocale} onValueChange={switchLocale}>
+      <SelectTrigger
+        className={`
+          flex w-[110px] items-center gap-2 border-white/20 bg-transparent
+          text-white
+          ${className ?? ''}
+        `}
+      >
+        <Globe className="size-4" />
+        <SelectValue />
+      </SelectTrigger>
+
+      <SelectContent>
+        {routing.locales.map((locale) => (
+          <SelectItem key={locale} value={locale}>
+            {locale.toLocaleUpperCase()}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
