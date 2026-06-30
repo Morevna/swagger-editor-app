@@ -35,11 +35,7 @@ export default function Header() {
             {t('signIn')}
           </Button>
 
-          <Button
-            className="
-            cursor-pointer rounded-sm bg-blue-600 px-4 py-1 text-sm
-          "
-          >
+          <Button className="cursor-pointer rounded-sm bg-blue-600 px-4 py-1 text-sm">
             {t('signUp')}
           </Button>
         </div>

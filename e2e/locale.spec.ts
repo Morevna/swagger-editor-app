@@ -7,15 +7,18 @@ test.describe('Language switcher', () => {
     const switcher = page.getByRole('combobox');
     await expect(switcher).toBeVisible();
 
-    await expect(switcher.getByRole('option', { name: 'EN' })).toBeAttached();
-    await expect(switcher.getByRole('option', { name: 'RU' })).toBeAttached();
+    await switcher.click();
+
+    await expect(page.getByRole('option', { name: 'EN' })).toBeVisible();
+    await expect(page.getByRole('option', { name: 'RU' })).toBeVisible();
   });
 
   test('switching from EN to RU updates the URL', async ({ page }) => {
     await page.goto('/en');
 
-    const switcher = page.getByRole('combobox');
-    await switcher.selectOption('ru');
+    await page.getByRole('combobox').click();
+
+    await page.getByRole('option', { name: 'RU' }).click();
 
     await expect(page).toHaveURL(/\/ru/);
   });
@@ -23,10 +26,12 @@ test.describe('Language switcher', () => {
   test('RU locale is reflected as selected after switch', async ({ page }) => {
     await page.goto('/en');
 
-    const switcher = page.getByRole('combobox');
-    await switcher.selectOption('ru');
+    await page.getByRole('combobox').click();
+    await page.getByRole('option', { name: 'RU' }).click();
 
     await page.waitForURL(/\/ru/);
-    await expect(switcher).toHaveValue('ru');
+
+    const switcher = page.getByRole('combobox');
+    await expect(switcher).toHaveText(/RU/i);
   });
 });

@@ -29,7 +29,7 @@ export default function Footer() {
               hover:text-blue-400
             "
           >
-            Alexander (T L)
+            Alexander (TL)
           </a>
           <a
             href="https://github.com/orgris"
