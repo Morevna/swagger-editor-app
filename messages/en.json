@@ -1,5 +1,15 @@
 {
   "HomePage": {
     "title": "Editor coming soon!"
+  },
+
+  "Layout": {
+    "about": "About",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "history": "History",
+    "signOut": "Sign Out",
+    "mainPlaceholder": "Swagger Editor & Viewer workspace will be here.",
+    "footerText": "Built for RS School React Course 2026"
   }
 }

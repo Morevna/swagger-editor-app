@@ -1,5 +1,14 @@
 {
   "HomePage": {
     "title": "Скоро здесь будет эдитор!"
+  },
+  "Layout": {
+    "about": "О проекте",
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "history": "История",
+    "signOut": "Выйти",
+    "mainPlaceholder": "Здесь будет рабочая область Swagger Editor & Viewer.",
+    "footerText": "Разработано для курса по React от RS School 2026"
   }
 }
