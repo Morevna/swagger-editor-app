@@ -1,5 +1,34 @@
+import { routing } from '@/i18n/routing';
 import { createServerClient } from '@supabase/ssr';
+import { NextURL } from 'next/dist/server/web/next-url';
+
 import { NextResponse, type NextRequest } from 'next/server';
+import { AUTH_ROUTES, PROTECTED_ROUTES } from './auth-routes';
+
+function getLocaleAndPath(pathname: string) {
+  const localePattern = new RegExp(`^/(${routing.locales.join('|')})(?=$|/)`);
+  const match = pathname.match(localePattern);
+
+  if (match) {
+    return {
+      locale: match[1],
+      pathWithoutLocale: pathname.slice(match[0].length) || '/',
+    };
+  }
+
+  return {
+    locale: routing.defaultLocale,
+    pathWithoutLocale: pathname,
+  };
+}
+
+function cookieSwapAndRedirect(url: NextURL, originalResponse: NextResponse) {
+  const redirectResponse = NextResponse.redirect(url);
+  originalResponse.cookies
+    .getAll()
+    .map((cookie) => redirectResponse.cookies.set(cookie.name, cookie.value, cookie));
+  return redirectResponse;
+}
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -38,7 +67,23 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: If you remove getClaims() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
-  await supabase.auth.getClaims();
+
+  const { data } = await supabase.auth.getClaims();
+
+  const isAuthenticated = Boolean(data?.claims);
+  const { locale, pathWithoutLocale } = getLocaleAndPath(request.nextUrl.pathname);
+
+  if (!isAuthenticated && PROTECTED_ROUTES.includes(pathWithoutLocale)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/sign-in`;
+    return cookieSwapAndRedirect(url, supabaseResponse);
+  }
+
+  if (isAuthenticated && AUTH_ROUTES.includes(pathWithoutLocale)) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${locale}/`;
+    return cookieSwapAndRedirect(url, supabaseResponse);
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
