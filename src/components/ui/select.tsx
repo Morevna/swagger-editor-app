@@ -81,7 +81,7 @@ function SelectContent({
         data-align-trigger={position === 'item-aligned'}
         className={cn(
           `
-            relative z-50 max-h-(--radix-select-content-available-height) min-w-36
+            relative z-50 max-h-(--radix-select-content-available-height)
             origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto
             rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10
             duration-100
