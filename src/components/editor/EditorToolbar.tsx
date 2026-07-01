@@ -3,7 +3,7 @@
 import React from 'react';
 import { useEditorStore } from '../../stores/editorStore';
 import { convertFormat } from '../../lib/editor-utils';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 
 export const EditorToolbar: React.FC = () => {
@@ -24,7 +24,11 @@ export const EditorToolbar: React.FC = () => {
   return (
     <div className="flex h-12 items-center justify-between border-b bg-muted/40 p-2">
       <div className="flex items-center gap-2">
-        <span className="rounded-sm bg-primary/10 px-2 py-1 font-mono text-xs text-primary uppercase">
+        <span
+          className="
+          rounded-sm bg-primary/10 px-2 py-1 font-mono text-xs text-primary uppercase
+        "
+        >
           {language}
         </span>
         <Button size="sm" variant="outline" onClick={handleConvert}>
