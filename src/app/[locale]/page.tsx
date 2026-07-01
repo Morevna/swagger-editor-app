@@ -13,9 +13,9 @@ export default function Home() {
   return (
     <div
       className="
-      flex flex-1 flex-col bg-zinc-50
-      dark:bg-black
-    "
+        flex flex-1 flex-col bg-zinc-50
+        dark:bg-black
+      "
     >
       <main
         className="
@@ -35,8 +35,7 @@ export default function Home() {
 
         <div
           className="
-            h-1/2 min-h-0 flex-1 overflow-y-auto rounded-lg border
-            border-zinc-200 bg-white p-4
+            h-1/2 min-h-0 flex-1 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-4
             landscape:h-full
             dark:border-zinc-800 dark:bg-zinc-950
           "

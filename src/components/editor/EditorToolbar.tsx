@@ -22,18 +22,9 @@ export const EditorToolbar: React.FC = () => {
   };
 
   return (
-    <div
-      className="
-        flex h-12 items-center justify-between border-b bg-muted/40 p-2
-      "
-    >
+    <div className="flex h-12 items-center justify-between border-b bg-muted/40 p-2">
       <div className="flex items-center gap-2">
-        <span
-          className="
-            rounded-sm bg-primary/10 px-2 py-1 font-mono text-xs text-primary
-            uppercase
-          "
-        >
+        <span className="rounded-sm bg-primary/10 px-2 py-1 font-mono text-xs text-primary uppercase">
           {language}
         </span>
         <Button size="sm" variant="outline" onClick={handleConvert}>
@@ -43,11 +34,7 @@ export const EditorToolbar: React.FC = () => {
 
       <div className="flex items-center gap-4">
         {errors.length > 0 ? (
-          <span
-            className="
-              max-w-[200px] truncate text-xs font-medium text-destructive
-            "
-          >
+          <span className="max-w-[200px] truncate text-xs font-medium text-destructive">
             ❌ {errors[0]}
           </span>
         ) : (

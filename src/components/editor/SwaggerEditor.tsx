@@ -76,15 +76,13 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
   return (
     <div
       className="
-        flex h-full flex-1 flex-col overflow-hidden rounded-lg border
-        border-zinc-200 bg-white
+        flex h-full flex-1 flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white
         dark:border-zinc-800 dark:bg-zinc-950
       "
     >
       <div
         className="
-          flex items-center justify-between border-b border-zinc-200 bg-zinc-50
-          px-4 py-2
+          flex items-center justify-between border-b border-zinc-200 bg-zinc-50 px-4 py-2
           dark:border-zinc-800 dark:bg-zinc-900
         "
       >

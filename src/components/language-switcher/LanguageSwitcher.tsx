@@ -26,8 +26,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
     <Select value={currentLocale} onValueChange={switchLocale}>
       <SelectTrigger
         className={`
-          flex w-[110px] items-center gap-2 border-white/20 bg-transparent
-          text-white
+          flex w-[110px] items-center gap-2 border-white/20 bg-transparent text-white
           ${className ?? ''}
         `}
       >
