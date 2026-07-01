@@ -42,7 +42,7 @@ export default function Home() {
               dark:text-zinc-300
             "
           >
-            Swagger Viewer
+            Viewer
           </h2>
           {schema ? (
             <p className="text-xs text-zinc-500">Схема готова для отображения эндпоинтов...</p>

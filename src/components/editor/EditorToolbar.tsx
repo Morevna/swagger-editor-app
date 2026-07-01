@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useEditorStore } from './store';
-import { convertFormat } from './editor-utils';
+import { useEditorStore } from '../../stores/editorStore';
+import { convertFormat } from '../../lib/editor-utils';
 import { Button } from '@/components/ui/Button';
 import { useTranslations } from 'next-intl';
 

@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Editor from '@monaco-editor/react';
-import { parseSchema, validateSchema, detectFormat, convertFormat } from './editor-utils';
-import type { SwaggerEditorProps, SchemaFormat } from './types';
+import { parseSchema, validateSchema, detectFormat, convertFormat } from '../../lib/editor-utils';
+import { SchemaFormat } from '../../stores/editorStore';
+
+interface SwaggerEditorProps {
+  onSchemaChange: (parsedData: unknown, format: SchemaFormat) => void;
+}
 
 const defaultSchema = {
   openapi: '3.0.0',

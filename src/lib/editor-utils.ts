@@ -1,5 +1,5 @@
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
-import { SchemaFormat } from './types';
+import { SchemaFormat } from '../stores/editorStore';
 
 export const detectFormat = (text: string): SchemaFormat => {
   const trimmed = text.trim();
