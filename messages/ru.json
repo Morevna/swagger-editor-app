@@ -10,5 +10,13 @@
     "signOut": "Выйти",
     "mainPlaceholder": "Здесь будет рабочая область Swagger Editor & Viewer.",
     "footerText": "Разработано для курса по React от RS School 2026"
+  },
+  "Editor": {
+    "title": "Редактор спецификаций",
+    "noErrors": "Ошибок не обнаружено",
+    "errors": {
+      "PARSE_ERROR": "Ошибка синтаксиса: проверьте правильность JSON/YAML",
+      "INVALID_FORMAT": "Невозможно конвертировать некорректный формат"
+    }
   }
 }

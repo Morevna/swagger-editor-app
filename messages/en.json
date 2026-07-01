@@ -2,7 +2,6 @@
   "HomePage": {
     "title": "Editor coming soon!"
   },
-
   "Layout": {
     "about": "About",
     "signIn": "Sign In",
@@ -11,5 +10,13 @@
     "signOut": "Sign Out",
     "mainPlaceholder": "Swagger Editor & Viewer workspace will be here.",
     "footerText": "Built for RS School React Course 2026"
+  },
+  "Editor": {
+    "title": "API Specification Editor",
+    "noErrors": "No errors detected",
+    "errors": {
+      "PARSE_ERROR": "Syntax error: check your JSON/YAML syntax",
+      "INVALID_FORMAT": "Cannot convert invalid format"
+    }
   }
 }
