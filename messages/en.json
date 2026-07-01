@@ -25,5 +25,12 @@
   },
   "Viewer": {
     "title": "Viewer"
+  },
+  "authErrors": {
+    "minLength": "Password must be at least 8 characters",
+    "noLatter": "Password must contain at least one letter",
+    "noNumber": "Password must contain at least one number",
+    "noSpecial": "Password must contain at least one special character",
+    "noMatch": "Passwords do not match"
   }
 }
