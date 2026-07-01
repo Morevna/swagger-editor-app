@@ -5,6 +5,7 @@ import { useEditorStore } from '../../stores/editorStore';
 import { convertFormat } from '../../lib/editor-utils';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 export const EditorToolbar: React.FC = () => {
   const t = useTranslations();
@@ -24,11 +25,7 @@ export const EditorToolbar: React.FC = () => {
   return (
     <div className="flex h-12 items-center justify-between border-b bg-muted/40 p-2">
       <div className="flex items-center gap-2">
-        <span
-          className="
-          rounded-sm bg-primary/10 px-2 py-1 font-mono text-xs text-primary uppercase
-        "
-        >
+        <span className="rounded-sm bg-primary/10 px-2 py-1 font-mono text-xs text-primary uppercase">
           {language}
         </span>
         <Button size="sm" variant="outline" onClick={handleConvert}>
@@ -38,11 +35,20 @@ export const EditorToolbar: React.FC = () => {
 
       <div className="flex items-center gap-4">
         {errors.length > 0 ? (
-          <span className="max-w-[200px] truncate text-xs font-medium text-destructive">
-            ❌ {errors[0]}
-          </span>
+          <div className="flex items-center gap-1.5 text-destructive">
+            <AlertCircle className="size-4 shrink-0" />
+            <span className="max-w-[200px] truncate text-xs font-medium">{errors[0]}</span>
+          </div>
         ) : (
-          <span className="text-xs font-medium text-emerald-600">✓ Valid</span>
+          <div
+            className="
+      flex items-center gap-1.5 text-emerald-600
+      dark:text-emerald-500
+    "
+          >
+            <CheckCircle2 className="size-4 shrink-0" />
+            <span className="text-xs font-medium">Valid</span>
+          </div>
         )}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import Editor from '@monaco-editor/react';
 import { parseSchema, validateSchema, detectFormat, convertFormat } from '../../lib/editor-utils';
 import { SchemaFormat } from '../../stores/editorStore';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface SwaggerEditorProps {
   onSchemaChange: (parsedData: unknown, format: SchemaFormat) => void;
@@ -173,9 +174,21 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
         "
       >
         {error ? (
-          <span className="font-medium text-red-500">✕ {error}</span>
+          <div data-testid="editor-error" className="flex items-center gap-1.5 text-red-500">
+            <AlertCircle className="size-4 shrink-0" />
+            <span className="font-medium">{error}</span>
+          </div>
         ) : (
-          <span className="font-medium text-emerald-600">✓ {t('noErrors') || 'No errors'}</span>
+          <div
+            data-testid="editor-valid"
+            className="
+      flex items-center gap-1.5 text-emerald-600
+      dark:text-emerald-500
+    "
+          >
+            <CheckCircle2 className="size-4 shrink-0" />
+            <span className="font-medium">{t('noErrors') || 'No errors'}</span>
+          </div>
         )}
       </div>
     </div>
