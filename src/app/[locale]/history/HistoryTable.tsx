@@ -32,20 +32,18 @@ import { useTranslations } from 'next-intl';
 import { DateFilter } from '@/types/logs';
 import { DateFilterSidebar } from './DateFilterSidebar';
 import { useColumns } from './columns';
-
-const PAGE_SIZE = 25;
+import { PAGE_SIZE } from '@/constants/historyTable';
 
 interface DataTableProps<TData> {
   data: TData[];
 }
 
 export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
-  const columns = useColumns() as ColumnDef<TData, TValue>[];
-
   const t = useTranslations('HistoryPage');
   const [sorting, setSorting] = React.useState<SortingState>([{ id: 'time', desc: true }]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const columns = useColumns() as ColumnDef<TData, TValue>[];
 
   const table = useReactTable({
     data,

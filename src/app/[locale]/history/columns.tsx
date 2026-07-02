@@ -61,7 +61,6 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
         );
       },
     },
-
     {
       accessorKey: 'duration',
       header: t('duration'),
