@@ -10,3 +10,7 @@ export type LogEntry = {
 };
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+
+export type StatusGroup = '2xx' | '3xx' | '4xx' | '5xx';
+
+export type DateFilter = 'all' | 'today' | 'yesterday' | 'lastWeek' | 'lastMonth';
