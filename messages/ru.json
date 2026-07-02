@@ -2,7 +2,6 @@
   "HomePage": {
     "title": "Скоро здесь будет эдитор!"
   },
-
   "Layout": {
     "about": "О проекте",
     "signIn": "Войти",
@@ -39,7 +38,6 @@
     "SIGNUP_FAILED": "Регистрация не удалась",
     "EMAIL_TAKEN": "Этот адрес электронной почты уже занят."
   },
-
   "signInForm": {
     "cardTitle": "Вход в аккаунт",
     "cardDescription": "Пожалуйста, предоставьте свои учетные данные.",
@@ -49,7 +47,6 @@
     "passwordPlaceholder": "********",
     "buttonSubmit": "Войти"
   },
-
   "signUpForm": {
     "cardTitle": "Регистрация",
     "cardDescription": "Зарегистрируйтесь заполнив почту и пароль",
@@ -60,5 +57,26 @@
     "confirmPasswordLabel": "Подтвердите Пароль",
     "confirmPasswordPlaceholder": "********",
     "buttonSubmit": "Зарегистрироваться"
+  },
+  "HistoryPage": {
+    "title": "Все запросы",
+    "dataFilter": "История",
+    "all": "Все запросы",
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "lastWeek": "Последние 7 дней",
+    "lastMonth": "Последние 30 дней",
+    "columns": "Колонки",
+    "noResults": "Нет результатов за это время",
+    "previous": "Предыдущая",
+    "next": "Следующая",
+    "method": "Метод",
+    "endpoint": "Эндпоинт",
+    "status": "Статус",
+    "duration": "Длительность",
+    "requestSize": "Размер запроса",
+    "responseSize": "Размер ответа",
+    "errorDetails": "Детали ошибки",
+    "time": "Время"
   }
 }

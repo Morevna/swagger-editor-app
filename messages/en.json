@@ -38,7 +38,6 @@
     "SIGNUP_FAILED": "Sign Up failed",
     "EMAIL_TAKEN": "This email if already taken"
   },
-
   "signInForm": {
     "cardTitle": "Sign In",
     "cardDescription": "Please provide your credentials",
@@ -48,7 +47,6 @@
     "passwordPlaceholder": "********",
     "buttonSubmit": "Sign In"
   },
-
   "signUpForm": {
     "cardTitle": "Sign Up",
     "cardDescription": "Please provide your credentials",
@@ -59,5 +57,26 @@
     "confirmPasswordLabel": "Confirm Password",
     "confirmPasswordPlaceholder": "********",
     "buttonSubmit": "Sign Up"
+  },
+  "HistoryPage": {
+    "title": "All Requests",
+    "dataFilter": "History",
+    "all": "All Requests",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "lastWeek": "Last 7 days",
+    "lastMonth": "Last 30 days",
+    "columns": "Columns",
+    "noResults": "No results for this time",
+    "previous": "Previous",
+    "next": "Next",
+    "method": "Method",
+    "endpoint": "Endpoint",
+    "status": "Status",
+    "duration": "Duration",
+    "requestSize": "Request size",
+    "responseSize": "Response size",
+    "errorDetails": "Error details",
+    "time": "Time"
   }
 }
