@@ -1,29 +1,27 @@
-import { getTranslations } from 'next-intl/server';
 import * as z from 'zod';
-
-const t = await getTranslations('authErrors');
+import { AUTH_ERROR_CODES } from './auth-error-codes';
 
 export const signInSchema = z.object({
-  email: z.email(),
-  password: z.string().min(1),
+  email: z.email(AUTH_ERROR_CODES.INVALID_EMAIL),
+  password: z.string().min(1, AUTH_ERROR_CODES.REQUIRED),
 });
 
 export const signUpSchema = z
   .object({
-    email: z.email(),
+    email: z.email(AUTH_ERROR_CODES.INVALID_EMAIL),
     password: z
       .string()
-      .min(8, t('minLength'))
-      .regex(/[a-zA-Z]/, t('noLatter'))
-      .regex(/0-9/, t('noNumber'))
-      .regex(/[^a-zA-Z0-9]/, t('noSpecial')),
+      .min(8, AUTH_ERROR_CODES.MIN_LENGTH)
+      .regex(/[a-zA-Z]/, AUTH_ERROR_CODES.NO_LETTER)
+      .regex(/[0-9]/, AUTH_ERROR_CODES.NO_NUMBER)
+      .regex(/[^a-zA-Z0-9]/, AUTH_ERROR_CODES.NO_SPECIAL),
     confirmPassword: z.string(),
   })
   .superRefine(({ password, confirmPassword }, ctx) => {
     if (password !== confirmPassword) {
       ctx.addIssue({
         code: 'custom',
-        message: t('noMatch'),
+        message: AUTH_ERROR_CODES.NO_MATCH,
         path: ['confirmPassword'],
       });
     }

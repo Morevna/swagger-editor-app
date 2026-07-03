@@ -27,10 +27,22 @@
     "title": "Viewer"
   },
   "authErrors": {
-    "minLength": "Password must be at least 8 characters",
-    "noLatter": "Password must contain at least one letter",
-    "noNumber": "Password must contain at least one number",
-    "noSpecial": "Password must contain at least one special character",
-    "noMatch": "Passwords do not match"
+    "INVALID_EMAIL": "Invalid email",
+    "MIN_LENGTH": "Password must be at least 8 characters",
+    "NO_LETTER": "Password must contain at least one letter",
+    "NO_NUMBER": "Password must contain at least one number",
+    "NO_SPECIAL": "Password must contain at least one special character",
+    "NO_MATCH": "Passwords do not match",
+    "REQUIRED": "This field is required"
+  },
+
+  "signInForm": {
+    "cardTitle": "Sign In",
+    "cardDescription": "Please provide your credentials",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "********",
+    "buttonSubmit": "Sign In"
   }
 }

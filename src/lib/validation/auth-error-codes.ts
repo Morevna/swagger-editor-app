@@ -1,0 +1,11 @@
+export const AUTH_ERROR_CODES = {
+  INVALID_EMAIL: 'INVALID_EMAIL',
+  MIN_LENGTH: 'MIN_LENGTH',
+  NO_LETTER: 'NO_LETTER',
+  NO_NUMBER: 'NO_NUMBER',
+  NO_SPECIAL: 'NO_SPECIAL',
+  NO_MATCH: 'NO_MATCH',
+  REQUIRED: 'REQUIRED',
+} as const;
+
+export type AuthErrorCode = (typeof AUTH_ERROR_CODES)[keyof typeof AUTH_ERROR_CODES];
