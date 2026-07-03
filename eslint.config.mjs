@@ -14,13 +14,14 @@ const eslintConfig = defineConfig([
     'next-env.d.ts',
     'coverage',
     'playwright-report',
+    'src/components/ui/**',
   ]),
   {
     extends: [eslintPluginBetterTailwindcss.configs.recommended],
     settings: {
       'better-tailwindcss': {
         entryPoint: './src/app/globals.css',
-        printWidth: 100, // match your Prettier printWidth
+        printWidth: 100,
       },
     },
     rules: { 'better-tailwindcss/enforce-consistent-line-wrapping': ['warn', { printWidth: 100 }] },
