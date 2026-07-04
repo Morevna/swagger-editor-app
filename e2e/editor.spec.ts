@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 declare global {
   interface Window {
     monaco?: {
-      editor: {
+      editor?: {
         getModels: () => Array<{
           setValue: (value: string) => void;
         }>;
@@ -15,67 +15,80 @@ declare global {
 test.describe('Swagger Editor E2E Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await page.waitForSelector('.monaco-editor', { state: 'visible' });
+    await page.locator('.monaco-editor').waitFor({ state: 'visible' });
   });
 
-  test('should render default JSON schema successfully', async ({ page }) => {
-    await expect(page.getByText('Editor', { exact: true })).toBeVisible();
+  async function clearAndPasteText(page: Page, text: string) {
+    await page.evaluate((t) => {
+      const editorModel = window.monaco?.editor?.getModels()[0];
+      if (editorModel) {
+        editorModel.setValue(t);
+      }
+    }, text.trim());
+  }
 
-    const jsonButton = page.getByRole('button', { name: 'JSON', exact: true });
-
-    await expect(jsonButton).toHaveClass(/bg-white/);
-
-    await expect(page.getByTestId('editor-error')).not.toBeVisible();
-
-    await expect(page.getByTestId('editor-valid')).toBeVisible();
-  });
-
-  test('should allow manual code editing and preserve valid status', async ({ page }) => {
+  test('should auto-detect JSON format, validate it, and update status', async ({ page }) => {
     const validJson = JSON.stringify(
       {
         openapi: '3.0.0',
-        info: { title: 'Updated API', version: '2.0.0' },
+        info: { title: 'E2E Test API', version: '1.0.0' },
         paths: {},
       },
       null,
       2
     );
 
-    await page.evaluate((text) => {
-      const models = window.monaco?.editor?.getModels();
+    await clearAndPasteText(page, validJson);
 
-      if (models && models.length > 0) {
-        models[0].setValue(text);
-      }
-    }, validJson);
+    const jsonButton = page.locator('button', { hasText: 'JSON' });
+    await expect(jsonButton).toHaveAttribute('aria-pressed', 'true');
 
-    await expect(page.getByTestId('editor-error')).not.toBeVisible();
+    const validStatus = page.getByTestId('editor-valid');
+    await expect(validStatus).toBeVisible();
+  });
+
+  test('should auto-detect YAML format and show error for invalid schema', async ({ page }) => {
+    const invalidYaml = [
+      'openapi: "3.0.0"',
+      'info:',
+      '  title: "Invalid YAML API"',
+      '  version: "1.0.0"',
+    ].join('\n');
+
+    await clearAndPasteText(page, invalidYaml);
+
+    const yamlButton = page.locator('button', { hasText: 'YAML' });
+    await expect(yamlButton).toHaveAttribute('aria-pressed', 'true');
+
+    const errorStatus = page.getByTestId('editor-error');
+    await expect(errorStatus).toBeVisible();
+    await expect(errorStatus).toContainText(/(paths|коректность|correctness)/i);
+  });
+
+  test('should successfully toggle format via UI switch without breaking text', async ({
+    page,
+  }) => {
+    const initialJson = JSON.stringify(
+      {
+        openapi: '3.0.0',
+        info: { title: 'Switching API', version: '1.0.0' },
+        paths: {},
+      },
+      null,
+      2
+    );
+
+    await clearAndPasteText(page, initialJson);
+
     await expect(page.getByTestId('editor-valid')).toBeVisible();
-  });
 
-  test('should switch format to YAML and back via header buttons', async ({ page }) => {
-    await page.getByRole('button', { name: 'YAML', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'YAML', exact: true })).toHaveClass(/bg-white/);
+    const yamlButton = page.locator('button', { hasText: 'YAML' });
+    await yamlButton.click();
 
-    await page.getByRole('button', { name: 'JSON', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'JSON', exact: true })).toHaveClass(/bg-white/);
-  });
+    await expect(yamlButton).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByTestId('editor-valid')).toBeVisible();
 
-  test('should auto-detect format when raw YAML text is pasted', async ({ page }) => {
-    const rawYaml = `openapi: 3.0.0
-info:
-  title: Lazy Loaded YAML API
-  version: 1.1.0
-paths: {}`;
-
-    await page.evaluate((text) => {
-      const models = window.monaco?.editor?.getModels();
-      if (models && models.length > 0) {
-        models[0].setValue(text);
-      }
-    }, rawYaml);
-
-    await page.locator('.monaco-editor').click();
-    await expect(page.getByRole('button', { name: 'YAML', exact: true })).toHaveClass(/bg-white/);
+    const editorText = page.locator('.monaco-editor');
+    await expect(editorText).toContainText('Switching API');
   });
 });

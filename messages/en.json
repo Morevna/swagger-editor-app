@@ -16,7 +16,11 @@
     "noErrors": "No errors detected",
     "errors": {
       "PARSE_ERROR": "Check for correctness.",
-      "INVALID_FORMAT": "Cannot convert invalid format"
+      "INVALID_FORMAT": "Cannot convert invalid format",
+      "NOT_AN_OBJECT": "Specification must be a valid JSON or YAML object",
+      "MISSING_OPENAPI_VERSION": "Missing mandatory 'openapi' or 'swagger' version field",
+      "MISSING_INFO": "Missing mandatory 'info' block with API metadata",
+      "MISSING_PATHS": "Missing mandatory 'paths' object for API endpoints"
     }
   },
   "Viewer": {

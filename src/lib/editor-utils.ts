@@ -1,6 +1,6 @@
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
-import { SchemaFormat } from '../stores/editorStore';
 
+export type SchemaFormat = 'json' | 'yaml';
 export const detectFormat = (text: string): SchemaFormat => {
   const trimmed = text.trim();
   if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
@@ -27,10 +27,28 @@ export const parseSchema = (text: string): ParseResult => {
   }
 };
 
-export const validateSchema = (data: unknown): string | null => {
-  if (!data || typeof data !== 'object') {
-    return 'Invalid OpenAPI structure';
+export type ValidationErrorCode =
+  | 'NOT_AN_OBJECT'
+  | 'MISSING_OPENAPI_VERSION'
+  | 'MISSING_INFO'
+  | 'MISSING_PATHS';
+
+export const validateSchema = (data: unknown): ValidationErrorCode | null => {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return 'NOT_AN_OBJECT';
   }
+  const schema = data as Record<string, unknown>;
+  if (!schema.openapi && !schema.swagger) {
+    return 'MISSING_OPENAPI_VERSION';
+  }
+  if (!schema.info || typeof schema.info !== 'object') {
+    return 'MISSING_INFO';
+  }
+
+  if (!schema.paths || typeof schema.paths !== 'object') {
+    return 'MISSING_PATHS';
+  }
+
   return null;
 };
 

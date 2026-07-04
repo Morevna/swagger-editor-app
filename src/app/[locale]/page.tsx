@@ -1,42 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import SwaggerEditor from '@/components/editor/SwaggerEditor';
 
 export default function Home() {
-  const [schema, setSchema] = useState<unknown>(null);
+  const [schema, setSchema] = useState<unknown | null>(null);
 
-  function handleSchemaChange(parsedData: unknown) {
+  const handleSchemaChange = useCallback((parsedData: unknown | null) => {
     setSchema(parsedData);
-  }
+  }, []);
 
   return (
     <div
       className="
-        flex flex-1 flex-col bg-zinc-50
+        flex min-h-0 flex-1 flex-col bg-zinc-50
         dark:bg-black
       "
     >
-      <main
+      <div
         className="
-          flex h-[calc(100vh-3.5rem)] flex-1 flex-col gap-6 p-6
+          flex min-h-0 flex-1 gap-6 p-6
           portrait:flex-col
           landscape:flex-row
         "
       >
-        <div
-          className="
-            h-1/2 min-h-0 flex-1
-            landscape:h-full
-          "
-        >
+        <div className="flex min-h-0 flex-1">
           <SwaggerEditor onSchemaChange={handleSchemaChange} />
         </div>
 
         <div
           className="
-            h-1/2 min-h-0 flex-1 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-4
-            landscape:h-full
+            flex min-h-0 flex-1 flex-col overflow-y-auto rounded-lg border border-zinc-200 bg-white
+            p-4
             dark:border-zinc-800 dark:bg-zinc-950
           "
         >
@@ -54,7 +49,7 @@ export default function Home() {
             <p className="text-xs text-zinc-400">Введите валидную OpenAPI спецификацию слева</p>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

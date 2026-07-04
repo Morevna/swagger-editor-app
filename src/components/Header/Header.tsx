@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { Suspense } from 'react';
 
 import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
 
@@ -29,7 +30,9 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <LanguageSwitcher />
+          <Suspense fallback={null}>
+            <LanguageSwitcher />
+          </Suspense>
 
           <Button className="cursor-pointer rounded-sm border px-4 py-1 text-sm">
             {t('signIn')}

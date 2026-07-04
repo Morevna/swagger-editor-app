@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Editor from '@monaco-editor/react';
 import { parseSchema, validateSchema, detectFormat, convertFormat } from '../../lib/editor-utils';
-import { SchemaFormat } from '../../stores/editorStore';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
+export type SchemaFormat = 'json' | 'yaml';
+
 interface SwaggerEditorProps {
-  onSchemaChange: (parsedData: unknown, format: SchemaFormat) => void;
+  onSchemaChange: (parsedData: unknown | null, format: SchemaFormat) => void;
 }
 
 const defaultSchema = {
@@ -20,41 +21,70 @@ const defaultSchema = {
   paths: {},
 };
 
+const INITIAL_TEXT = JSON.stringify(defaultSchema, null, 2);
+
 export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
   const t = useTranslations('Editor');
 
-  const [format, setFormat] = useState<SchemaFormat>('json');
-  const [value, setValue] = useState(JSON.stringify(defaultSchema, null, 2));
-  const [error, setError] = useState<string | null>(null);
+  const [value, setValue] = useState(INITIAL_TEXT);
 
-  function handleEditorChange(text: string | undefined) {
-    const currentText = text || '';
-    setValue(currentText);
+  const [format, setFormat] = useState<SchemaFormat>(() => detectFormat(INITIAL_TEXT));
+
+  const [error, setError] = useState<string | null>(() => {
+    const parsed = parseSchema(INITIAL_TEXT);
+    if (parsed.error) return t(`errors.${parsed.error}`);
+
+    const validationError = validateSchema(parsed.data);
+    if (validationError) return t(`errors.${validationError}`);
+
+    return null;
+  });
+
+  useEffect(() => {
+    const parsed = parseSchema(INITIAL_TEXT);
+    const detected = detectFormat(INITIAL_TEXT);
+    if (!parsed.error && !validateSchema(parsed.data)) {
+      onSchemaChange(parsed.data, detected);
+    } else {
+      onSchemaChange(null, detected);
+    }
+  }, [onSchemaChange]);
+
+  function processSchema(currentText: string) {
+    const detected = detectFormat(currentText);
+
+    setFormat((prev) => (prev !== detected ? detected : prev));
 
     if (!currentText.trim()) {
       setError(null);
+      onSchemaChange(null, detected);
       return;
     }
 
-    const detected = detectFormat(currentText);
-    if (detected !== format) {
-      setFormat(detected);
-    }
-
     const parsed = parseSchema(currentText);
+
     if (parsed.error) {
-      setError(t(`errors.${parsed.error}`) || 'Parsing error');
+      setError(t(`errors.${parsed.error}`));
+      onSchemaChange(null, detected);
       return;
     }
 
     const validationError = validateSchema(parsed.data);
+
     if (validationError) {
-      setError(validationError);
+      setError(t(`errors.${validationError}`));
+      onSchemaChange(null, detected);
       return;
     }
 
     setError(null);
-    onSchemaChange?.(parsed.data, detected);
+    onSchemaChange(parsed.data, detected);
+  }
+
+  function handleEditorChange(text: string | undefined) {
+    const currentText = text || '';
+    setValue(currentText);
+    processSchema(currentText);
   }
 
   function handleFormatToggle(newFormat: SchemaFormat) {
@@ -62,16 +92,15 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
 
     const conversion = convertFormat(value, format);
 
-    if (conversion.success) {
-      setFormat(newFormat);
-      setValue(conversion.result);
-      setError(null);
-
-      const parsed = parseSchema(conversion.result);
-      onSchemaChange?.(parsed.data, newFormat);
-    } else {
-      setError(t('errors.INVALID_FORMAT') || 'Cannot convert invalid format');
+    if (!conversion.success) {
+      setError(t('errors.INVALID_FORMAT'));
+      return;
     }
+
+    setFormat(newFormat);
+    setValue(conversion.result);
+
+    processSchema(conversion.result);
   }
 
   return (
@@ -88,12 +117,13 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
         "
       >
         <span
+          data-testid="editor-title"
           className="
             text-sm font-semibold text-zinc-700
             dark:text-zinc-300
           "
         >
-          {t('title') || 'Editor'}
+          {t('title')}
         </span>
 
         <div
@@ -104,6 +134,7 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
         >
           <button
             type="button"
+            aria-pressed={format === 'json'}
             onClick={() => handleFormatToggle('json')}
             className={`
               cursor-pointer rounded-sm px-3 py-1 transition-all
@@ -125,6 +156,7 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
           </button>
           <button
             type="button"
+            aria-pressed={format === 'yaml'}
             onClick={() => handleFormatToggle('yaml')}
             className={`
               cursor-pointer rounded-sm px-3 py-1 transition-all
@@ -147,7 +179,7 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
         </div>
       </div>
 
-      <div className="relative h-[500px] w-full">
+      <div data-testid="editor-container" className="relative w-full flex-1">
         <Editor
           height="100%"
           language={format}
@@ -182,12 +214,12 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
           <div
             data-testid="editor-valid"
             className="
-      flex items-center gap-1.5 text-emerald-600
-      dark:text-emerald-500
-    "
+              flex items-center gap-1.5 text-emerald-600
+              dark:text-emerald-500
+            "
           >
             <CheckCircle2 className="size-4 shrink-0" />
-            <span className="font-medium">{t('noErrors') || 'No errors'}</span>
+            <span className="font-medium">{t('noErrors')}</span>
           </div>
         )}
       </div>
