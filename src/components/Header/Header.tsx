@@ -31,6 +31,16 @@ export default async function Header() {
           >
             {t('about')}
           </Link>
+
+          <Link
+            href="/history"
+            className="
+              text-sm transition-colors
+              hover:text-blue-400
+            "
+          >
+            {t('history')}
+          </Link>
         </div>
 
         <div className="flex items-center gap-3">
