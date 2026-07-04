@@ -1,5 +1,5 @@
-import { FieldLabel, FieldContent, Field, FieldTitle } from '@/components/ui/Field';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup';
+import { FieldLabel, FieldContent, Field, FieldTitle } from '@/components/ui/field';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { DateFilter } from '@/types/logs';
 import { useTranslations } from 'next-intl';
 

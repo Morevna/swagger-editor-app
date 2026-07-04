@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { use } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -20,14 +20,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/Table';
-import { Button } from '@/components/ui/Button';
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+} from '@/components/ui/dropdown-menu';
 import { useTranslations } from 'next-intl';
 import { DateFilter } from '@/types/logs';
 import { DateFilterSidebar } from './DateFilterSidebar';
@@ -35,15 +35,17 @@ import { useColumns } from './columns';
 import { PAGE_SIZE } from '@/constants/historyTable';
 
 interface DataTableProps<TData> {
-  data: TData[];
+  logsPromise: Promise<TData[]>;
 }
 
-export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
+export function HistoryTable<TData, TValue>({ logsPromise }: DataTableProps<TData>) {
   const t = useTranslations('HistoryPage');
   const [sorting, setSorting] = React.useState<SortingState>([{ id: 'time', desc: true }]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const columns = useColumns() as ColumnDef<TData, TValue>[];
+
+  const data = use(logsPromise);
 
   const table = useReactTable({
     data,

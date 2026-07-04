@@ -1,5 +1,5 @@
 // components/SkeletonTable.tsx
-import { Skeleton } from '@/components/ui/Skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PAGE_SIZE } from '@/constants/historyTable';
 
 const SKELETON_ROWS = PAGE_SIZE;
