@@ -82,5 +82,9 @@
     "empty": "Empty",
     "emptyMessage": "Please make a couple of requests",
     "emptyButton": "Let's go"
+  },
+  "ErrorHistory": {
+    "message": "Something went wrong!",
+    "button": "Try again"
   }
 }

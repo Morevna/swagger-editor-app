@@ -33,7 +33,7 @@ import { DateFilter } from '@/types/logs';
 import { DateFilterSidebar } from './DateFilterSidebar';
 import { useColumns } from './columns';
 import { PAGE_SIZE } from '@/constants/historyTable';
-import EmptyHistoryMessage from './emptyHistoryMessage';
+import EmptyHistoryMessage from './EmptyHistoryMessage';
 
 interface DataTableProps<TData> {
   logsPromise: Promise<TData[]>;
