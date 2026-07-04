@@ -77,6 +77,9 @@
     "requestSize": "Размер запроса",
     "responseSize": "Размер ответа",
     "errorDetails": "Детали ошибки",
-    "time": "Время"
+    "time": "Время",
+    "empty": "Пусто",
+    "emptyMessage": "Пожалуйста, сделайте пару запросов",
+    "emptyButton": "Сделать запрос"
   }
 }
