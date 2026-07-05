@@ -34,7 +34,10 @@
     "NO_NUMBER": "Пароль должен содержать одно число минимум",
     "NO_SPECIAL": "Пароль должен содержать один специальный знак минимум",
     "NO_MATCH": "Пароли не совпадают",
-    "REQUIRED": "Это поле обязательно к заполнению"
+    "REQUIRED": "Это поле обязательно к заполнению",
+    "INVALID_CREDENTIALS": "Неверные учетные данные",
+    "SIGNUP_FAILED": "Регистрация не удалась",
+    "EMAIL_TAKEN": "Этот адрес электронной почты уже занят."
   },
 
   "signInForm": {
@@ -45,5 +48,15 @@
     "passwordLabel": "Пароль",
     "passwordPlaceholder": "********",
     "buttonSubmit": "Войти"
+  },
+
+  "signUpForm": {
+    "cardTitle": "Регистрация",
+    "cardDescription": "Зарегистрируйтесь заполнив почту и пароль",
+    "emailLabel": "Электронная почта",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Пароль",
+    "passwordPlaceholder": "********",
+    "buttonSubmit": "Зарегистрироваться"
   }
 }

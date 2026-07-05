@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
+import { signInAction } from '@/lib/actions/auth';
 
 function SignInForm() {
   const tErr = useTranslations('authErrors');
@@ -23,21 +24,21 @@ function SignInForm() {
   });
 
   const onSubmit = async (values: SignInFormValues) => {
-    // setIsSubmitting(true);
-    // setFormError(null);
-    // const result = await signInAction(values);
-    // if (result?.error) {
-    //   setFormError(t(result.error));
-    // }
-    // setIsSubmitting(false);
+    setIsSubmitting(true);
+    setFormError(null);
+    const result = await signInAction(values);
+    if (result?.error) {
+      setFormError(tErr(result.error));
+    }
+    setIsSubmitting(false);
   };
 
   return (
     <Card
       className="
-      w-full
-      sm:max-w-md
-    "
+        w-full
+        sm:max-w-md
+      "
     >
       <CardHeader>
         <CardTitle>{t('cardTitle')}</CardTitle>

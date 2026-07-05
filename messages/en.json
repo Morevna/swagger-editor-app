@@ -33,7 +33,10 @@
     "NO_NUMBER": "Password must contain at least one number",
     "NO_SPECIAL": "Password must contain at least one special character",
     "NO_MATCH": "Passwords do not match",
-    "REQUIRED": "This field is required"
+    "REQUIRED": "This field is required",
+    "INVALID_CREDENTIALS": "Invalid credentials",
+    "SIGNUP_FAILED": "Sign Up failed",
+    "EMAIL_TAKEN": "This email if already taken"
   },
 
   "signInForm": {
@@ -44,5 +47,15 @@
     "passwordLabel": "Password",
     "passwordPlaceholder": "********",
     "buttonSubmit": "Sign In"
+  },
+
+  "signUpForm": {
+    "cardTitle": "Sign Up",
+    "cardDescription": "Please provide your credentials",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "********",
+    "buttonSubmit": "Sign Up"
   }
 }
