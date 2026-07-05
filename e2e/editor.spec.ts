@@ -62,7 +62,7 @@ test.describe('Swagger Editor E2E Tests', () => {
 
     const errorStatus = page.getByTestId('editor-error');
     await expect(errorStatus).toBeVisible();
-    await expect(errorStatus).toContainText(/(paths|коректность|correctness)/i);
+    await expect(errorStatus).toContainText("Missing mandatory 'paths' object for API endpoints");
   });
 
   test('should successfully toggle format via UI switch without breaking text', async ({

@@ -53,19 +53,28 @@ export const validateSchema = (data: unknown): ValidationErrorCode | null => {
 };
 
 export const convertFormat = (
-  text: string,
-  currentLang: SchemaFormat
+  text: string
 ): { success: boolean; result: string; newLang: SchemaFormat } => {
+  const currentLang = detectFormat(text);
+
   try {
     if (currentLang === 'json') {
       const obj = JSON.parse(text);
-      const yamlResult = stringifyYaml(obj);
-      return { success: true, result: yamlResult, newLang: 'yaml' };
-    } else {
-      const obj = parseYaml(text);
-      const jsonResult = JSON.stringify(obj, null, 2);
-      return { success: true, result: jsonResult, newLang: 'json' };
+
+      return {
+        success: true,
+        result: stringifyYaml(obj),
+        newLang: 'yaml',
+      };
     }
+
+    const obj = parseYaml(text);
+
+    return {
+      success: true,
+      result: JSON.stringify(obj, null, 2),
+      newLang: 'json',
+    };
   } catch {
     return {
       success: false,

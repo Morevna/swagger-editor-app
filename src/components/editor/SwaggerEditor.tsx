@@ -90,14 +90,14 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
   function handleFormatToggle(newFormat: SchemaFormat) {
     if (format === newFormat) return;
 
-    const conversion = convertFormat(value, format);
+    const conversion = convertFormat(value);
 
     if (!conversion.success) {
       setError(t('errors.INVALID_FORMAT'));
       return;
     }
 
-    setFormat(newFormat);
+    setFormat(conversion.newLang);
     setValue(conversion.result);
 
     processSchema(conversion.result);

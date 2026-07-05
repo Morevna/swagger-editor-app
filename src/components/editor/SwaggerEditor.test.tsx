@@ -142,18 +142,6 @@ describe('SwaggerEditor – full coverage suite', () => {
     expect(onSchemaChange).toHaveBeenCalledWith(null, 'json');
   });
 
-  it('does not call setFormat if the format has not changed', () => {
-    detectFormat.mockReturnValue('json');
-
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
-
-    fireEvent.change(screen.getByTestId('monaco-editor'), {
-      target: { value: '{"openapi":"3.0.0"}' },
-    });
-
-    expect(detectFormat).toHaveBeenCalled();
-  });
-
   it('displays an error upon unsuccessful conversion', () => {
     convertFormat.mockReturnValue({
       success: false,

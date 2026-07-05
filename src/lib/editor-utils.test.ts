@@ -95,7 +95,7 @@ describe('Editor Utilities', () => {
   describe('convertFormat', () => {
     it('must successfully convert valid JSON into a YAML string', () => {
       const jsonText = '{\n  "openapi": "3.0.0"\n}';
-      const result = convertFormat(jsonText, 'json');
+      const result = convertFormat(jsonText);
 
       expect(result.success).toBe(true);
       expect(result.newLang).toBe('yaml');
@@ -104,7 +104,7 @@ describe('Editor Utilities', () => {
 
     it('must successfully convert valid YAML into a JSON string', () => {
       const yamlText = 'openapi: 3.0.0\ninfo:\n  title: Test';
-      const result = convertFormat(yamlText, 'yaml');
+      const result = convertFormat(yamlText);
 
       expect(result.success).toBe(true);
       expect(result.newLang).toBe('json');
@@ -115,7 +115,7 @@ describe('Editor Utilities', () => {
 
     it('It should return `success: false` and the original text if the conversion fails within the `catch` block.', () => {
       const brokenJson = '{ openapi: 3.0.0 ';
-      const result = convertFormat(brokenJson, 'json');
+      const result = convertFormat(brokenJson);
 
       expect(result.success).toBe(false);
       expect(result.result).toBe(brokenJson);
