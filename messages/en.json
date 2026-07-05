@@ -2,7 +2,6 @@
   "HomePage": {
     "title": "Editor coming soon!"
   },
-
   "Layout": {
     "about": "About",
     "signIn": "Sign In",
@@ -11,5 +10,20 @@
     "signOut": "Sign Out",
     "mainPlaceholder": "Swagger Editor & Viewer workspace will be here.",
     "footerText": "Built for RS School React Course 2026"
+  },
+  "Editor": {
+    "title": "Editor",
+    "noErrors": "No errors detected",
+    "errors": {
+      "PARSE_ERROR": "Check for correctness.",
+      "INVALID_FORMAT": "Cannot convert invalid format",
+      "NOT_AN_OBJECT": "Specification must be a valid JSON or YAML object",
+      "MISSING_OPENAPI_VERSION": "Missing mandatory 'openapi' or 'swagger' version field",
+      "MISSING_INFO": "Missing mandatory 'info' block with API metadata",
+      "MISSING_PATHS": "Missing mandatory 'paths' object for API endpoints"
+    }
+  },
+  "Viewer": {
+    "title": "Viewer"
   }
 }

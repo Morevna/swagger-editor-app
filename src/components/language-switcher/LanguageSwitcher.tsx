@@ -5,7 +5,7 @@ import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 interface LanguageSwitcherProps {
   className?: string;
@@ -26,8 +26,7 @@ export default function LanguageSwitcher({ className }: LanguageSwitcherProps) {
     <Select value={currentLocale} onValueChange={switchLocale}>
       <SelectTrigger
         className={`
-          flex w-[110px] items-center gap-2 border-white/20 bg-transparent
-          text-white
+          flex w-[110px] items-center gap-2 border-white/20 bg-transparent text-white
           ${className ?? ''}
         `}
       >

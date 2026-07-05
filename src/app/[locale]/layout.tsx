@@ -49,11 +49,11 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
         h-full antialiased
       `}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-screen flex-col">
         <NextIntlClientProvider>
           <Header />
 
-          <main className="flex-1">{children}</main>
+          <main className="flex flex-1">{children}</main>
 
           <Footer />
         </NextIntlClientProvider>

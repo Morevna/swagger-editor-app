@@ -20,8 +20,10 @@ const eslintConfig = defineConfig([
     settings: {
       'better-tailwindcss': {
         entryPoint: './src/app/globals.css',
+        printWidth: 100, // match your Prettier printWidth
       },
     },
+    rules: { 'better-tailwindcss/enforce-consistent-line-wrapping': ['warn', { printWidth: 100 }] },
   },
   prettier,
 ]);
