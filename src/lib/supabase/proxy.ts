@@ -66,7 +66,7 @@ export async function updateSession(request: NextRequest) {
 
   if (!isAuthenticated && PROTECTED_ROUTES.includes(pathWithoutLocale)) {
     const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/sign-in`;
+    url.pathname = `/${locale}`;
     return cookieSwapAndRedirect(url, supabaseResponse);
   }
 
