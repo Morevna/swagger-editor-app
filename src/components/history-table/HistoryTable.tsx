@@ -41,10 +41,11 @@ interface DataTableProps<TData> {
 
 export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
   const t = useTranslations('HistoryPage');
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'time', desc: true }]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+
   const columns = useColumns() as ColumnDef<TData, TValue>[];
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'time', desc: true }]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
@@ -92,7 +93,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
                   {t('columns')}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent className="min-w-35" align="end">
                 {table
                   .getAllColumns()
                   .filter((column) => column.getCanHide())
@@ -100,11 +101,10 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
                     return (
                       <DropdownMenuCheckboxItem
                         key={column.id}
-                        className="capitalize"
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) => column.toggleVisibility(!!value)}
                       >
-                        {column.id}
+                        {t(column.id)}
                       </DropdownMenuCheckboxItem>
                     );
                   })}
@@ -129,7 +129,11 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      data-testid="table-row"
+                    >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { METHOD_COLORS, STATUS_GROUP_COLORS } from '@/constants/columnsStyles';
 import { dateFilterFn } from '@/lib/utils/table/dateFilterFn';
 import { formatDateTime } from '@/lib/utils/table/formatDateTime';
