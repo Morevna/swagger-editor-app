@@ -1,7 +1,5 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { HistoryTable } from './HistoryTable';
-import { PAGE_SIZE } from '@/constants/historyTable';
 import { MOCK_LOGS } from '@/lib/mocks/logs';
 
 const TEST_DATE = '2026-07-06T12:00:00.000Z';
@@ -26,7 +24,7 @@ describe('HistoryTable', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders texts and buttons', () => {
+  it('should render title, column headers, and buttons on mount', () => {
     render(<HistoryTable data={MOCK_LOGS} />);
 
     expect(screen.getByRole('heading', { name: 'title' })).toBeInTheDocument();
@@ -42,7 +40,7 @@ describe('HistoryTable', () => {
     expect(screen.getByRole('button', { name: 'next' })).toBeInTheDocument();
   });
 
-  it('renders Empty history message if []', () => {
+  it('should display empty state message and a call-to-action link when no logs are provided', () => {
     render(<HistoryTable data={[]} />);
 
     expect(screen.getByText('empty')).toBeInTheDocument();
@@ -50,7 +48,7 @@ describe('HistoryTable', () => {
     expect(screen.getByRole('link', { name: 'emptyButton' })).toBeInTheDocument();
   });
 
-  it('correctly renders data', () => {
+  it('should correctly populate table rows and cell values with the provided mock logs data', () => {
     render(<HistoryTable data={MOCK_LOGS} />);
 
     expect(screen.getByText('PATCH')).toBeInTheDocument();
@@ -61,7 +59,7 @@ describe('HistoryTable', () => {
   });
 
   describe('DropdownMenu Columns Visibility', () => {
-    it('should open the menu and show columns', () => {
+    it('should display visibility toggle options for all table columns when the columns button is clicked', () => {
       render(<HistoryTable data={MOCK_LOGS} />);
 
       const triggerButton = screen.getByRole('button', { name: /columns/i });
