@@ -1,12 +1,17 @@
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
+import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
-
 import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
+import { createClient } from '@/lib/supabase/server';
+import { signOutAction } from '@/lib/actions/auth';
+import { Suspense } from 'react';
 
-export default function Header() {
-  const t = useTranslations('Layout');
+export default async function Header() {
+  const t = await getTranslations('Layout');
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const isSignedIn = Boolean(data?.claims);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-slate-950 text-white">
@@ -29,15 +34,41 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <LanguageSwitcher />
+          <Suspense fallback={null}>
+            <LanguageSwitcher />
+          </Suspense>
 
-          <Button className="cursor-pointer rounded-sm border px-4 py-1 text-sm">
-            {t('signIn')}
-          </Button>
+          {isSignedIn ? (
+            <>
+              <Link
+                href="/history"
+                className="
+                  ms-1 text-sm transition-colors
+                  hover:text-blue-400
+                "
+              >
+                {t('history')}
+              </Link>
 
-          <Button className="cursor-pointer rounded-sm bg-blue-600 px-4 py-1 text-sm">
-            {t('signUp')}
-          </Button>
+              <form action={signOutAction}>
+                <Button
+                  type="submit"
+                  className="cursor-pointer rounded-sm border px-4 py-1 text-sm"
+                >
+                  {t('signOut')}
+                </Button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Button asChild className="cursor-pointer rounded-sm border px-4 py-1 text-sm">
+                <Link href="/sign-in">{t('signIn')}</Link>
+              </Button>
+              <Button asChild className="cursor-pointer rounded-sm bg-blue-600 px-4 py-1 text-sm">
+                <Link href="/sign-up">{t('signUp')}</Link>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>

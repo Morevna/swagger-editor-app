@@ -25,5 +25,39 @@
   },
   "Viewer": {
     "title": "Viewer"
+  },
+  "authErrors": {
+    "INVALID_EMAIL": "Invalid email",
+    "MIN_LENGTH": "Password must be at least 8 characters",
+    "NO_LETTER": "Password must contain at least one letter",
+    "NO_NUMBER": "Password must contain at least one number",
+    "NO_SPECIAL": "Password must contain at least one special character",
+    "NO_MATCH": "Passwords do not match",
+    "REQUIRED": "This field is required",
+    "INVALID_CREDENTIALS": "Invalid credentials",
+    "SIGNUP_FAILED": "Sign Up failed",
+    "EMAIL_TAKEN": "This email if already taken"
+  },
+
+  "signInForm": {
+    "cardTitle": "Sign In",
+    "cardDescription": "Please provide your credentials",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "********",
+    "buttonSubmit": "Sign In"
+  },
+
+  "signUpForm": {
+    "cardTitle": "Sign Up",
+    "cardDescription": "Please provide your credentials",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "********",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "********",
+    "buttonSubmit": "Sign Up"
   }
 }
