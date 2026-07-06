@@ -53,7 +53,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
         <NextIntlClientProvider>
           <Header />
 
-          <main className="flex flex-1">{children}</main>
+          <main className="flex flex-1 flex-col">{children}</main>
 
           <Footer />
         </NextIntlClientProvider>
