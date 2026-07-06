@@ -95,13 +95,15 @@ function SignUpForm() {
               render={({ field, fieldState }) => {
                 return (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="confirm-password-input">{t('passwordLabel')}</FieldLabel>
+                    <FieldLabel htmlFor="confirm-password-input">
+                      {t('confirmPasswordLabel')}
+                    </FieldLabel>
                     <Input
                       {...field}
                       type="password"
                       id="confirm-password-input"
                       aria-invalid={fieldState.invalid}
-                      placeholder={t('passwordPlaceholder')}
+                      placeholder={t('confirmPasswordPlaceholder')}
                       autoComplete="current-password"
                     />
                     {fieldState.invalid && (

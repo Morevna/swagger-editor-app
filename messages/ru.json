@@ -57,6 +57,8 @@
     "emailPlaceholder": "name@example.com",
     "passwordLabel": "Пароль",
     "passwordPlaceholder": "********",
+    "confirmPasswordLabel": "Подтвердите Пароль",
+    "confirmPasswordPlaceholder": "********",
     "buttonSubmit": "Зарегистрироваться"
   }
 }
