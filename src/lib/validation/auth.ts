@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { AUTH_ERROR_CODES } from './auth-error-codes';
+import { AUTH_ERROR_CODES } from '../supabase/auth-error-codes';
 
 export const signInSchema = z.object({
   email: z.email(AUTH_ERROR_CODES.INVALID_EMAIL),

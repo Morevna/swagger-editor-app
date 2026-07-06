@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { AUTH_ERROR_CODES, type AuthErrorCode } from '@/lib/validation/auth-error-codes';
+import { AUTH_ERROR_CODES, type AuthErrorCode } from '@/lib/supabase/auth-error-codes';
 import {
   signInSchema,
   signUpSchema,
