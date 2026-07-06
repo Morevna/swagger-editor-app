@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 
 export default function EmptyHistoryMessage() {
   const t = useTranslations('HistoryPage');
