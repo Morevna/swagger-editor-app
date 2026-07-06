@@ -1,10 +1,9 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { Button } from '../ui/button';
+import { Button } from '../ui/Button';
 
 export default function EmptyHistoryMessage() {
   const t = useTranslations('HistoryPage');
-
   return (
     <div className="flex w-full grow flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-5">

@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { METHOD_COLORS, STATUS_GROUP_COLORS } from '@/constants/columnsStyles';
-import { dateFilterFn } from '@/lib/utils/dateFilterFn';
-import { formatDateTime } from '@/lib/utils/formatDateTime';
-import { formatSize } from '@/lib/utils/formatSize';
-import { getStatusGroup } from '@/lib/utils/getStatusGroup';
+import { dateFilterFn } from '@/lib/utils/table/dateFilterFn';
+import { formatDateTime } from '@/lib/utils/table/formatDateTime';
+import { formatSize } from '@/lib/utils/table/formatSize';
+import { getStatusGroup } from '@/lib/utils/table/getStatusGroup';
 import { LogEntry, Method } from '@/types/logs';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
