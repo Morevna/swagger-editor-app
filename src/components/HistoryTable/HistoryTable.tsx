@@ -1,6 +1,6 @@
 'use client';
 
-import React, { use } from 'react';
+import React from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -36,17 +36,15 @@ import { PAGE_SIZE } from '@/constants/historyTable';
 import EmptyHistoryMessage from './EmptyHistoryMessage';
 
 interface DataTableProps<TData> {
-  logsPromise: Promise<TData[]>;
+  data: TData[];
 }
 
-export function HistoryTable<TData, TValue>({ logsPromise }: DataTableProps<TData>) {
+export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
   const t = useTranslations('HistoryPage');
   const [sorting, setSorting] = React.useState<SortingState>([{ id: 'time', desc: true }]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const columns = useColumns() as ColumnDef<TData, TValue>[];
-
-  const data = use(logsPromise);
 
   const table = useReactTable({
     data,
