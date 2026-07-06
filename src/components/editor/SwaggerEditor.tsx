@@ -5,11 +5,12 @@ import { useTranslations } from 'next-intl';
 import Editor from '@monaco-editor/react';
 import { parseSchema, validateSchema, detectFormat, convertFormat } from '../../lib/editor-utils';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { OpenApiSchema } from '../viewer/types';
 
 export type SchemaFormat = 'json' | 'yaml';
 
 interface SwaggerEditorProps {
-  onSchemaChange: (parsedData: unknown | null, format: SchemaFormat) => void;
+  onSchemaChange: (parsedData: OpenApiSchema | null) => void;
 }
 
 const defaultSchema = {
@@ -18,7 +19,33 @@ const defaultSchema = {
     title: 'Sample API',
     version: '1.0.0',
   },
-  paths: {},
+  servers: [
+    {
+      url: 'https://api.example.com/v1',
+    },
+  ],
+  paths: {
+    '/users': {
+      get: {
+        summary: 'Get all users',
+        description: 'Returns all users',
+      },
+      post: {
+        summary: 'Create user',
+        description: 'Creates a new user',
+      },
+    },
+    '/users/{id}': {
+      get: {
+        summary: 'Get user',
+        description: 'Returns a user by id',
+      },
+      delete: {
+        summary: 'Delete user',
+        description: 'Deletes a user',
+      },
+    },
+  },
 };
 
 const INITIAL_TEXT = JSON.stringify(defaultSchema, null, 2);
@@ -27,11 +54,9 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
   const t = useTranslations('Editor');
 
   const [value, setValue] = useState(INITIAL_TEXT);
-
   const [format, setFormat] = useState<SchemaFormat>(() => detectFormat(INITIAL_TEXT));
-
   const [error, setError] = useState<string | null>(() => {
-    const parsed = parseSchema(INITIAL_TEXT);
+    const parsed = parseSchema<OpenApiSchema>(INITIAL_TEXT);
     if (parsed.error) return t(`errors.${parsed.error}`);
 
     const validationError = validateSchema(parsed.data);
@@ -41,12 +66,11 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
   });
 
   useEffect(() => {
-    const parsed = parseSchema(INITIAL_TEXT);
-    const detected = detectFormat(INITIAL_TEXT);
+    const parsed = parseSchema<OpenApiSchema>(INITIAL_TEXT);
     if (!parsed.error && !validateSchema(parsed.data)) {
-      onSchemaChange(parsed.data, detected);
+      onSchemaChange(parsed.data);
     } else {
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
     }
   }, [onSchemaChange]);
 
@@ -57,15 +81,15 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
 
     if (!currentText.trim()) {
       setError(null);
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
       return;
     }
 
-    const parsed = parseSchema(currentText);
+    const parsed = parseSchema<OpenApiSchema>(currentText);
 
     if (parsed.error) {
       setError(t(`errors.${parsed.error}`));
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
       return;
     }
 
@@ -73,12 +97,12 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
 
     if (validationError) {
       setError(t(`errors.${validationError}`));
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
       return;
     }
 
     setError(null);
-    onSchemaChange(parsed.data, detected);
+    onSchemaChange(parsed.data);
   }
 
   function handleEditorChange(text: string | undefined) {

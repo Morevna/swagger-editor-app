@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import SwaggerEditor from '@/components/editor/SwaggerEditor';
+import SwaggerEditor, { SchemaFormat } from '@/components/editor/SwaggerEditor';
+import SwaggerViewer from '@/components/viewer/SwaggerViewer';
+import { OpenApiSchema } from '@/components/viewer/types';
 
 export default function Home() {
-  const [schema, setSchema] = useState<unknown | null>(null);
-
-  const handleSchemaChange = useCallback((parsedData: unknown | null) => {
+  const [schema, setSchema] = useState<OpenApiSchema | null>(null);
+  const handleSchemaChange = useCallback((parsedData: OpenApiSchema | null) => {
     setSchema(parsedData);
   }, []);
 
@@ -35,19 +36,7 @@ export default function Home() {
             dark:border-zinc-800 dark:bg-zinc-950
           "
         >
-          <h2
-            className="
-              mb-4 text-sm font-semibold text-zinc-700
-              dark:text-zinc-300
-            "
-          >
-            Viewer
-          </h2>
-          {schema ? (
-            <p className="text-xs text-zinc-500">Схема готова для отображения эндпоинтов...</p>
-          ) : (
-            <p className="text-xs text-zinc-400">Введите валидную OpenAPI спецификацию слева</p>
-          )}
+          <SwaggerViewer schema={schema} />
         </div>
       </div>
     </div>
