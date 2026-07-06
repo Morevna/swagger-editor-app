@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
 import { createClient } from '@/lib/supabase/server';
 import { signOutAction } from '@/lib/actions/auth';
+import { Suspense } from 'react';
 
 export default async function Header() {
   const t = await getTranslations('Layout');
@@ -33,7 +34,9 @@ export default async function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <LanguageSwitcher />
+          <Suspense fallback={null}>
+            <LanguageSwitcher />
+          </Suspense>
 
           {isSignedIn ? (
             <>
