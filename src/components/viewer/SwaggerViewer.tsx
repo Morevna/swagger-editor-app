@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import EndpointCard from './EndpointCard';
+import EndpointDetails from './EndpointDetails';
 import EndpointList from './EndpointList';
 import { OpenApiSchema } from './types';
+import { Input } from '@/components/ui/input';
 
 interface SwaggerViewerProps {
   schema: OpenApiSchema | null;
@@ -14,6 +15,7 @@ const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head'] as 
 export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
   const [selectedPath, setSelectedPath] = useState('');
   const [selectedMethod, setSelectedMethod] = useState('');
+  const [search, setSearch] = useState('');
 
   if (!schema) {
     return (
@@ -41,11 +43,24 @@ export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
   const operation =
     schema.paths[currentPath]?.[currentMethod as keyof (typeof schema.paths)[string]];
 
+  const filteredPaths = Object.fromEntries(
+    Object.entries(schema.paths).filter(([path]) =>
+      path.toLowerCase().includes(search.toLowerCase())
+    )
+  );
+
   return (
     <div className="grid h-full grid-cols-[320px_1fr]">
       <div className="border-r border-zinc-200 p-4">
+        <div className="mb-4">
+          <Input
+            placeholder="Search endpoints..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
         <EndpointList
-          paths={schema.paths}
+          paths={filteredPaths}
           selectedPath={currentPath}
           selectedMethod={currentMethod}
           onSelect={(path, method) => {
@@ -57,7 +72,12 @@ export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
 
       <div className="overflow-y-auto p-6">
         {operation && (
-          <EndpointCard path={currentPath} method={currentMethod} operation={operation} />
+          <EndpointDetails
+            key={`${currentMethod}-${currentPath}`}
+            path={currentPath}
+            method={currentMethod}
+            operation={operation}
+          />
         )}
       </div>
     </div>

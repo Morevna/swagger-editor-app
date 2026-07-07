@@ -51,9 +51,9 @@ export default function EndpointList({
                       active
                         ? 'border-blue-500 bg-blue-50'
                         : `
-                        border-zinc-200
-                        hover:bg-zinc-50
-                      `
+                          border-zinc-200
+                          hover:bg-zinc-50
+                        `
                     }
                   `}
                 >

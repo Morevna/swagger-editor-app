@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import SwaggerEditor, { SchemaFormat } from '@/components/editor/SwaggerEditor';
+import SwaggerEditor from '@/components/editor/SwaggerEditor';
 import SwaggerViewer from '@/components/viewer/SwaggerViewer';
 import { OpenApiSchema } from '@/components/viewer/types';
 
