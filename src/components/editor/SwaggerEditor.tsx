@@ -21,28 +21,14 @@ const defaultSchema = {
   },
   servers: [
     {
-      url: 'https://api.example.com/v1',
+      url: 'https://jsonplaceholder.typicode.com',
     },
   ],
   paths: {
-    '/users': {
+    '/posts': {
       get: {
-        summary: 'Get all users',
-        description: 'Returns all users',
-      },
-      post: {
-        summary: 'Create user',
-        description: 'Creates a new user',
-      },
-    },
-    '/users/{id}': {
-      get: {
-        summary: 'Get user',
-        description: 'Returns a user by id',
-      },
-      delete: {
-        summary: 'Delete user',
-        description: 'Deletes a user',
+        summary: 'Get all posts',
+        description: 'Returns all posts from dummy server',
       },
     },
   },

@@ -5,6 +5,7 @@ export interface OpenApiSchema {
     title?: string;
     version?: string;
   };
+  servers?: { url: string }[];
   paths: Record<string, PathItem>;
 }
 

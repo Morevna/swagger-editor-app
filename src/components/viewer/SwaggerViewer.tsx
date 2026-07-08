@@ -25,6 +25,8 @@ export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
     );
   }
 
+  const baseUrl = schema.servers?.[0]?.url || '';
+
   let firstEndpoint = null;
 
   for (const [path, item] of Object.entries(schema.paths)) {
@@ -77,6 +79,7 @@ export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
             path={currentPath}
             method={currentMethod}
             operation={operation}
+            baseUrl={baseUrl}
           />
         )}
       </div>

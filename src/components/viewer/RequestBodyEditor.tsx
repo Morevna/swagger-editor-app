@@ -18,9 +18,9 @@ export function RequestBodyEditor({ requestBody, value, onChange }: RequestBodyE
       <div className="flex items-center justify-between">
         <span
           className="
-          text-xs font-medium text-zinc-500
-          dark:text-zinc-400
-        "
+            text-xs font-medium text-zinc-500
+            dark:text-zinc-400
+          "
         >
           {firstType || 'application/json'}
         </span>
@@ -32,9 +32,9 @@ export function RequestBodyEditor({ requestBody, value, onChange }: RequestBodyE
       {requestBody.description && (
         <p
           className="
-          text-xs text-zinc-600
-          dark:text-zinc-400
-        "
+            text-xs text-zinc-600
+            dark:text-zinc-400
+          "
         >
           {requestBody.description}
         </p>

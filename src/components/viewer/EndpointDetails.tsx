@@ -12,6 +12,7 @@ interface EndpointDetailsProps {
   path: string;
   method: string;
   operation: Operation;
+  baseUrl: string;
 }
 
 const methodColors: Record<string, string> = {
@@ -24,7 +25,12 @@ const methodColors: Record<string, string> = {
   head: 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400',
 };
 
-export default function EndpointDetails({ path, method, operation }: EndpointDetailsProps) {
+export default function EndpointDetails({
+  path,
+  method,
+  operation,
+  baseUrl,
+}: EndpointDetailsProps) {
   const [paramValues, setParamValues] = useState<Record<string, string>>({});
   const [bodyValue, setBodyValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -57,7 +63,12 @@ export default function EndpointDetails({ path, method, operation }: EndpointDet
       .filter(Boolean)
       .join('&');
 
-    const finalUrl = queryParams ? `${computedPath}?${queryParams}` : computedPath;
+    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    const cleanPath = computedPath.startsWith('/') ? computedPath : `/${computedPath}`;
+    const finalUrl = queryParams
+      ? `${cleanBaseUrl}${cleanPath}?${queryParams}`
+      : `${cleanBaseUrl}${cleanPath}`;
+
     let curl = `curl -X ${method.toUpperCase()} "${finalUrl}"`;
 
     operation.parameters
@@ -83,6 +94,7 @@ export default function EndpointDetails({ path, method, operation }: EndpointDet
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          baseUrl,
           path,
           method,
           parameters: paramValues,
@@ -91,9 +103,15 @@ export default function EndpointDetails({ path, method, operation }: EndpointDet
       });
 
       const data = await res.json();
+
+      const responseHeaders: Record<string, string> = {};
+      res.headers.forEach((val, key) => {
+        responseHeaders[key] = val;
+      });
+
       setResponse({
         status: res.status,
-        headers: JSON.stringify(Object.fromEntries(res.headers.entries()), null, 2),
+        headers: JSON.stringify(responseHeaders, null, 2),
         body: JSON.stringify(data, null, 2),
       });
     } catch (err: unknown) {
@@ -121,9 +139,9 @@ export default function EndpointDetails({ path, method, operation }: EndpointDet
         <div className="flex items-center gap-3">
           <span
             className={`
-            rounded-sm border px-2 py-1 text-xs font-semibold uppercase
-            ${badgeColor}
-          `}
+              rounded-sm border px-2 py-1 text-xs font-semibold uppercase
+              ${badgeColor}
+            `}
           >
             {method}
           </span>
@@ -246,16 +264,16 @@ export default function EndpointDetails({ path, method, operation }: EndpointDet
                 <div
                   key={status}
                   className="
-                  rounded-md border border-zinc-200 bg-white p-4
-                  dark:border-zinc-800 dark:bg-zinc-900
-                "
+                    rounded-md border border-zinc-200 bg-white p-4
+                    dark:border-zinc-800 dark:bg-zinc-900
+                  "
                 >
                   <div className="flex items-center gap-2">
                     <span
                       className={`
-                      font-mono text-sm font-semibold
-                      ${status.startsWith('2') ? `text-emerald-600` : `text-red-500`}
-                    `}
+                        font-mono text-sm font-semibold
+                        ${status.startsWith('2') ? `text-emerald-600` : `text-red-500`}
+                      `}
                     >
                       {status}
                     </span>
