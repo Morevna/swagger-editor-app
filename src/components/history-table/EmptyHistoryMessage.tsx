@@ -11,7 +11,7 @@ export default function EmptyHistoryMessage() {
           <span className="text-7xl">{t('empty')}</span>
           <span>{t('emptyMessage')}</span>
         </div>
-        <Button asChild>
+        <Button data-testid="empty-button" asChild>
           <Link href="/">{t('emptyButton')}</Link>
         </Button>
       </div>

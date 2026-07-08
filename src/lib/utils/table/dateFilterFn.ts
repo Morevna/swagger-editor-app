@@ -16,7 +16,7 @@ export const dateFilterFn = <TData>(row: Row<TData>, columnId: string, filterVal
   startOfMonth.setDate(startOfMonth.getDate() - 30);
 
   switch (filterValue) {
-    case 'all':
+    case 'allTime':
       return true;
     case 'today':
       return cellDate >= startOfToday;

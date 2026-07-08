@@ -6,6 +6,8 @@ import { dateFilterFn } from '@/lib/utils/table/dateFilterFn';
 import { formatDateTime } from '@/lib/utils/table/formatDateTime';
 import { formatSize } from '@/lib/utils/table/formatSize';
 import { getStatusGroup } from '@/lib/utils/table/getStatusGroup';
+import { methodsFilterFn } from '@/lib/utils/table/methodsFilterFn';
+import { statusFilterFn } from '@/lib/utils/table/statusFilterFn';
 import { LogEntry, Method } from '@/types/logs';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
@@ -19,6 +21,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
     {
       accessorKey: 'method',
       header: t('method'),
+      filterFn: methodsFilterFn,
       cell: ({ row }) => {
         const method = row.getValue('method') as Method;
         const styles = METHOD_COLORS[method];
@@ -45,6 +48,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
     {
       accessorKey: 'status',
       header: t('status'),
+      filterFn: statusFilterFn,
       cell: ({ row }) => {
         const status = row.getValue('status') as number;
         const group = getStatusGroup(status);

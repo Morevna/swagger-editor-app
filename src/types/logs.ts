@@ -11,6 +11,14 @@ export type LogEntry = {
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
 
-export type StatusGroup = '2xx' | '3xx' | '4xx' | '5xx';
+export type StatusGroup = '1xx' | '2xx' | '3xx' | '4xx' | '5xx';
 
-export type DateFilter = 'all' | 'today' | 'yesterday' | 'lastWeek' | 'lastMonth';
+export type FilterType = 'time' | 'method' | 'status';
+
+export type DateFilter = 'allTime' | 'today' | 'yesterday' | 'lastWeek' | 'lastMonth';
+
+export type MethodFilter = Method | 'allMethods';
+
+export type StatusFilter = StatusGroup | 'allStatuses';
+
+export type FilterValue = DateFilter | MethodFilter;

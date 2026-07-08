@@ -29,17 +29,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTranslations } from 'next-intl';
-import { DateFilter } from '@/types/logs';
-import { DateFilterSidebar } from './DateFilterSidebar';
+import { FilterType, FilterValue } from '@/types/logs';
+import { FilterSidebar } from './FilterSidebar';
 import { useColumns } from './columns';
-import { PAGE_SIZE } from '@/constants/historyTable';
+import { PAGE_SIZE } from '@/constants/tableSizes';
 import EmptyHistoryMessage from './EmptyHistoryMessage';
 
 interface DataTableProps<TData> {
   data: TData[];
 }
 
-export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
+export default function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
   const t = useTranslations('HistoryPage');
 
   const columns = useColumns() as ColumnDef<TData, TValue>[];
@@ -69,8 +69,11 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
     },
   });
 
-  const handleDateFilter = (filterValue: DateFilter) => {
-    setColumnFilters([{ id: 'time', value: filterValue }]);
+  const handleFilter = (type: FilterType, filterValue: FilterValue) => {
+    setColumnFilters((prev) => {
+      const next = prev.filter((filter) => filter.id !== type);
+      return [...next, { id: type, value: filterValue }];
+    });
   };
 
   const currentPage = table.getState().pagination.pageIndex;
@@ -78,8 +81,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
 
   return (
     <div className="flex size-full">
-      <DateFilterSidebar onFilterChange={handleDateFilter} />
-
+      <FilterSidebar onFilterChange={handleFilter} />
       {data.length === 0 ? (
         <EmptyHistoryMessage />
       ) : (
@@ -93,6 +95,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
                   {t('columns')}
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent className="min-w-35" align="end">
                 {table
                   .getAllColumns()
@@ -103,6 +106,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
                         key={column.id}
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                        data-testid={column.id}
                       >
                         {t(column.id)}
                       </DropdownMenuCheckboxItem>
@@ -111,6 +115,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+
           <div className="w-full grow overflow-hidden rounded-xl">
             <Table>
               <TableHeader>
@@ -126,6 +131,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
                   </TableRow>
                 ))}
               </TableHeader>
+
               <TableBody>
                 {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
@@ -155,6 +161,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
             <p>
               Page {pageCount === 0 ? 0 : currentPage + 1} of {pageCount}
             </p>
+
             <div className="flex items-center gap-1">
               <Button
                 variant="outline"
@@ -163,6 +170,7 @@ export function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
               >
                 {t('previous')}
               </Button>
+
               <Button
                 variant="outline"
                 onClick={() => table.nextPage()}

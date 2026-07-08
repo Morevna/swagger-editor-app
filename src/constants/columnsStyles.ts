@@ -11,6 +11,7 @@ export const METHOD_COLORS: Record<Method, string> = {
 };
 
 export const STATUS_GROUP_COLORS: Record<StatusGroup, string> = {
+  '1xx': 'text-sky-600',
   '2xx': 'text-emerald-600',
   '3xx': 'text-blue-600',
   '4xx': 'text-orange-600',

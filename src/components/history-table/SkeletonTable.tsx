@@ -1,14 +1,10 @@
 // components/SkeletonTable.tsx
 import { Skeleton } from '@/components/ui/skeleton';
-import { PAGE_SIZE } from '@/constants/historyTable';
-
-const SKELETON_ROWS = PAGE_SIZE;
-const SKELETON_SIDEBAR_ROWS = 5;
-const SKELETON_COLUMNS = 8;
+import { SKELETON_SIDEBAR_ROWS, SKELETON_COLUMNS, SKELETON_ROWS } from '@/constants/tableSizes';
 
 export function SkeletonTable() {
   return (
-    <div className="flex size-full">
+    <div data-testid="skeleton-table" className="flex size-full">
       <div className="flex w-1/5 flex-col gap-6 border-r px-6 py-4">
         <Skeleton className="h-10 w-32" />
         <div className="flex flex-col gap-2">

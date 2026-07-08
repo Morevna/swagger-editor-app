@@ -24,7 +24,7 @@ describe('dateFilterFn', () => {
 
   it('returns true for all', () => {
     const row = makeRow(TEST_TODAY_DATE);
-    expect(dateFilterFn(row, 'date', 'all')).toBe(true);
+    expect(dateFilterFn(row, 'date', 'allTime')).toBe(true);
   });
 
   it('returns true for today date', () => {

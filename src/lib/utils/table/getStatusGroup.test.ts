@@ -1,6 +1,12 @@
 import { getStatusGroup } from './getStatusGroup';
 
 describe('getStatusGroup', () => {
+  test('should return "1xx" for 1xx status codes', () => {
+    expect(getStatusGroup(100)).toBe('1xx');
+    expect(getStatusGroup(101)).toBe('1xx');
+    expect(getStatusGroup(199)).toBe('1xx');
+  });
+
   test('should return "2xx" for 2xx status codes', () => {
     expect(getStatusGroup(200)).toBe('2xx');
     expect(getStatusGroup(201)).toBe('2xx');
@@ -25,8 +31,8 @@ describe('getStatusGroup', () => {
     expect(getStatusGroup(599)).toBe('5xx');
   });
 
-  test('should return "2xx" for status codes below 200', () => {
-    expect(getStatusGroup(100)).toBe('2xx');
-    expect(getStatusGroup(199)).toBe('2xx');
+  test('should return "1xx" for unusual status codes', () => {
+    expect(getStatusGroup(600)).toBe('1xx');
+    expect(getStatusGroup(99)).toBe('1xx');
   });
 });
