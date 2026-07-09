@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { createTestUser, deleteTestUser } from './helpers.ts/supabase-admin';
+import { createTestUser, deleteTestUser } from './helpers/supabase-admin';
 
 const testEmail = `e2e-test-${Date.now()}@test.com`;
 const testPassword = 'Test!100';
