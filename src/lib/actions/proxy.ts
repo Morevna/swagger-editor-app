@@ -1,23 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server';
+'use server';
 
-export async function POST(req: NextRequest) {
+interface ProxyRequestArgs {
+  url: string;
+  method: string;
+  headers?: Record<string, string>;
+  body?: unknown;
+}
+
+interface ProxyResponse {
+  status: number;
+  headers: Record<string, string>;
+  body: string;
+}
+
+export async function proxyRequest({
+  url,
+  method,
+  headers: clientHeaders,
+  body,
+}: ProxyRequestArgs): Promise<ProxyResponse> {
   try {
-    const { url, method, headers: clientHeaders, body } = await req.json();
-
     if (!url) {
-      return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+      throw new Error('URL is required');
     }
 
-    const headers = new Headers();
-
-    if (clientHeaders) {
-      Object.entries(clientHeaders).forEach(([key, val]) => {
-        if (val) headers.append(key, val as string);
-      });
-    }
+    const headers = new Headers(clientHeaders);
 
     if (body && !headers.has('Content-Type')) {
-      headers.append('Content-Type', 'application/json');
+      headers.set('Content-Type', 'application/json');
     }
 
     const fetchOptions: RequestInit = {
@@ -43,22 +53,19 @@ export async function POST(req: NextRequest) {
       targetHeaders[key] = val;
     });
 
-    return NextResponse.json({
+    return {
       status: targetResponse.status,
       headers: targetHeaders,
       body: responseData,
-    });
+    };
   } catch (error: unknown) {
-    return NextResponse.json(
-      {
-        status: 500,
-        headers: {},
-        body: JSON.stringify({
-          error: 'Proxy error',
-          details: error instanceof Error ? error.message : String(error),
-        }),
-      },
-      { status: 200 }
-    );
+    return {
+      status: 500,
+      headers: {},
+      body: JSON.stringify({
+        error: 'Proxy error',
+        details: error instanceof Error ? error.message : String(error),
+      }),
+    };
   }
 }

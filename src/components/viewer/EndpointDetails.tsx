@@ -8,6 +8,7 @@ import { ParameterRow } from './ParameterRow';
 import { RequestBodyEditor } from './RequestBodyEditor';
 import { ResponseViewer } from './ResponseViewer';
 import { useTranslations } from 'next-intl';
+import { proxyRequest } from '@/lib/actions/proxy';
 
 interface EndpointDetailsProps {
   path: string;
@@ -142,18 +143,12 @@ export default function EndpointDetails({
         }
       }
 
-      const res = await fetch('/api/proxy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: finalUrl,
-          method,
-          headers: sendHeaders,
-          body: parsedBody,
-        }),
+      const data = await proxyRequest({
+        url: finalUrl,
+        method,
+        headers: sendHeaders,
+        body: parsedBody,
       });
-
-      const data = await res.json();
 
       let formattedBody = data.body;
       try {
