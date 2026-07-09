@@ -97,7 +97,10 @@ export default function EndpointDetails({
           baseUrl,
           path,
           method,
-          parameters: paramValues,
+          parameters: operation.parameters?.map((parameter) => ({
+            ...parameter,
+            value: paramValues[parameter.name] || '',
+          })),
           body: bodyValue ? JSON.parse(bodyValue) : undefined,
         }),
       });
@@ -130,48 +133,48 @@ export default function EndpointDetails({
 
   return (
     <div className="flex h-full flex-col">
-      <div
-        className="
-        mb-6 flex items-center justify-between border-b border-zinc-100 pb-4
-        dark:border-zinc-800
-      "
-      >
-        <div className="flex items-center gap-3">
-          <span
-            className={`
-              rounded-sm border px-2 py-1 text-xs font-semibold uppercase
-              ${badgeColor}
-            `}
-          >
-            {method}
-          </span>
-          <h2
-            className="
-            text-lg font-semibold text-zinc-900
-            dark:text-zinc-100
-          "
-          >
-            {path}
-          </h2>
-        </div>
-
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleGenerateCurl}>
-            Code cURL
-          </Button>
-          <Button size="sm" onClick={handleExecute} disabled={loading}>
-            {loading ? 'Executing...' : 'Try it out'}
-          </Button>
-        </div>
-      </div>
-
       <Tabs defaultValue="details" className="flex flex-1 flex-col">
-        <TabsList className="mb-6 w-fit">
+        <TabsList className="mb-6 grid w-full grid-cols-4">
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="parameters">Parameters</TabsTrigger>
           <TabsTrigger value="body">Request Body</TabsTrigger>
           <TabsTrigger value="responses">Responses</TabsTrigger>
         </TabsList>
+
+        <div
+          className="
+          mb-6 flex items-center justify-between border-b border-zinc-100 pb-4
+          dark:border-zinc-800
+        "
+        >
+          <div className="flex items-center gap-3">
+            <span
+              className={`
+                rounded-sm border px-2 py-1 text-xs font-semibold uppercase
+                ${badgeColor}
+              `}
+            >
+              {method}
+            </span>
+            <h2
+              className="
+              text-lg font-semibold text-zinc-900
+              dark:text-zinc-100
+            "
+            >
+              {path}
+            </h2>
+          </div>
+
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleGenerateCurl}>
+              Code cURL
+            </Button>
+            <Button size="sm" onClick={handleExecute} disabled={loading}>
+              {loading ? 'Executing...' : 'Try it out'}
+            </Button>
+          </div>
+        </div>
 
         <TabsContent value="details">
           <div className="space-y-6">
@@ -272,11 +275,12 @@ export default function EndpointDetails({
                     <span
                       className={`
                         font-mono text-sm font-semibold
-                        ${status.startsWith('2') ? `text-emerald-600` : `text-red-500`}
+                        ${status.startsWith('2') ? 'text-emerald-600' : 'text-red-500'}
                       `}
                     >
                       {status}
                     </span>
+
                     <div
                       className="
                       text-sm font-medium text-zinc-800
@@ -286,8 +290,63 @@ export default function EndpointDetails({
                       {response.description}
                     </div>
                   </div>
+
+                  {response.content &&
+                    Object.entries(response.content).map(([contentType, content]) => (
+                      <div key={contentType} className="mt-4 space-y-3">
+                        <div>
+                          <p className="mb-1 text-xs font-semibold text-zinc-500">Content-Type</p>
+                          <pre
+                            className="
+                            rounded-sm bg-zinc-100 p-2 text-xs
+                            dark:bg-zinc-800
+                          "
+                          >
+                            {contentType}
+                          </pre>
+                        </div>
+
+                        {content.schema && (
+                          <div>
+                            <p className="mb-1 text-xs font-semibold text-zinc-500">Schema</p>
+                            <pre
+                              className="
+                              overflow-auto rounded-sm bg-zinc-100 p-2 text-xs
+                              dark:bg-zinc-800
+                            "
+                            >
+                              {JSON.stringify(content.schema, null, 2)}
+                            </pre>
+                          </div>
+                        )}
+
+                        {content.example && (
+                          <div>
+                            <p className="mb-1 text-xs font-semibold text-zinc-500">Example</p>
+                            <pre
+                              className="
+                              overflow-auto rounded-sm bg-zinc-100 p-2 text-xs
+                              dark:bg-zinc-800
+                            "
+                            >
+                              {JSON.stringify(content.example, null, 2)}
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                 </div>
               ))}
+
+              {response && (
+                <div className="mt-6">
+                  <ResponseViewer
+                    status={response.status}
+                    headers={response.headers}
+                    body={response.body}
+                  />
+                </div>
+              )}
             </div>
           ) : (
             <p
@@ -301,10 +360,6 @@ export default function EndpointDetails({
           )}
         </TabsContent>
       </Tabs>
-
-      {response && (
-        <ResponseViewer status={response.status} headers={response.headers} body={response.body} />
-      )}
     </div>
   );
 }

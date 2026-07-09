@@ -13,15 +13,43 @@ export async function POST(req: NextRequest) {
     const headers = new Headers();
 
     if (parameters) {
-      Object.entries(parameters).forEach(([name, value]) => {
-        if (!value) return;
+      parameters.forEach(
+        (parameter: {
+          name: string;
+          in: 'path' | 'query' | 'header' | 'cookie';
+          value: string;
+        }) => {
+          if (!parameter.value) return;
 
-        if (finalPath.includes(`{${name}}`)) {
-          finalPath = finalPath.replace(`{${name}}`, encodeURIComponent(String(value)));
-        } else {
-          queryParams.append(name, String(value));
+          switch (parameter.in) {
+            case 'path':
+              finalPath = finalPath.replace(
+                `{${parameter.name}}`,
+                encodeURIComponent(parameter.value)
+              );
+              break;
+
+            case 'query':
+              queryParams.append(parameter.name, parameter.value);
+              break;
+
+            case 'header':
+              headers.append(parameter.name, parameter.value);
+              break;
+
+            case 'cookie': {
+              const currentCookies = headers.get('Cookie');
+              headers.set(
+                'Cookie',
+                currentCookies
+                  ? `${currentCookies}; ${parameter.name}=${parameter.value}`
+                  : `${parameter.name}=${parameter.value}`
+              );
+              break;
+            }
+          }
         }
-      });
+      );
     }
 
     const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;

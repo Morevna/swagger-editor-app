@@ -31,8 +31,8 @@ export interface Parameter {
 }
 
 export interface ResponseContent {
-  schema?: unknown;
-  example?: unknown;
+  schema?: object;
+  example?: object;
 }
 
 export interface ResponseItem {
