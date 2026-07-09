@@ -8,6 +8,7 @@ interface ProxyRequestArgs {
 }
 
 interface ProxyResponse {
+  ok: boolean;
   status: number;
   headers: Record<string, string>;
   body: string;
@@ -21,7 +22,12 @@ export async function proxyRequest({
 }: ProxyRequestArgs): Promise<ProxyResponse> {
   try {
     if (!url) {
-      throw new Error('URL is required');
+      return {
+        ok: false,
+        status: 400,
+        headers: {},
+        body: JSON.stringify({ error: 'URL is required' }),
+      };
     }
 
     const headers = new Headers(clientHeaders);
@@ -54,16 +60,18 @@ export async function proxyRequest({
     });
 
     return {
+      ok: targetResponse.ok,
       status: targetResponse.status,
       headers: targetHeaders,
       body: responseData,
     };
   } catch (error: unknown) {
     return {
-      status: 500,
-      headers: {},
+      ok: false,
+      status: 502,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        error: 'Proxy error',
+        error: 'Proxy integration error',
         details: error instanceof Error ? error.message : String(error),
       }),
     };
