@@ -1,6 +1,7 @@
 'use client';
 
 import { RequestBody } from './types';
+import { useTranslations } from 'next-intl';
 
 interface RequestBodyEditorProps {
   requestBody: RequestBody;
@@ -13,6 +14,7 @@ export function RequestBodyEditor({ requestBody, value, onChange }: RequestBodyE
   const firstType = contentTypes[0];
   const example = firstType ? requestBody.content?.[firstType]?.example : null;
 
+  const t = useTranslations('Viewer');
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
@@ -25,7 +27,7 @@ export function RequestBodyEditor({ requestBody, value, onChange }: RequestBodyE
           {firstType || 'application/json'}
         </span>
         {requestBody.required && (
-          <span className="text-[10px] font-semibold text-red-500 uppercase">Required</span>
+          <span className="text-[10px] font-semibold text-red-500 uppercase">{t('required')}</span>
         )}
       </div>
 

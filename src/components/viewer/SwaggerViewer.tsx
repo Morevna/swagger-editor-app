@@ -5,6 +5,7 @@ import EndpointDetails from './EndpointDetails';
 import EndpointList from './EndpointList';
 import { OpenApiSchema } from './types';
 import { Input } from '@/components/ui/input';
+import { useTranslations } from 'next-intl';
 
 interface SwaggerViewerProps {
   schema: OpenApiSchema | null;
@@ -17,10 +18,12 @@ export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
   const [selectedMethod, setSelectedMethod] = useState('');
   const [search, setSearch] = useState('');
 
+  const t = useTranslations('Viewer');
+
   if (!schema) {
     return (
       <div className="flex h-full items-center justify-center text-sm text-zinc-400">
-        Load a valid OpenAPI schema
+        {t('loadSchema')}
       </div>
     );
   }
@@ -56,7 +59,7 @@ export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
       <div className="border-r border-zinc-200 p-4">
         <div className="mb-4">
           <Input
-            placeholder="Search endpoints..."
+            placeholder={t('search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

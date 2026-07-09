@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 interface ResponseViewerProps {
   status: number;
   headers: string;
@@ -8,6 +10,7 @@ interface ResponseViewerProps {
 
 export function ResponseViewer({ status, headers, body }: ResponseViewerProps) {
   const isSuccess = status >= 200 && status < 300;
+  const t = useTranslations('Viewer');
 
   return (
     <div
@@ -22,7 +25,7 @@ export function ResponseViewer({ status, headers, body }: ResponseViewerProps) {
           dark:text-zinc-200
         "
       >
-        Response
+        {t('response')}
       </h3>
 
       <div className="flex items-center gap-2">
@@ -32,7 +35,7 @@ export function ResponseViewer({ status, headers, body }: ResponseViewerProps) {
             dark:text-zinc-400
           "
         >
-          Status Code:
+          {t('statusCode')}
         </span>
         <span
           className={`
@@ -61,7 +64,7 @@ export function ResponseViewer({ status, headers, body }: ResponseViewerProps) {
             dark:text-zinc-400
           "
         >
-          Response Body
+          {t('responseBody')}
         </span>
         <pre
           className="
@@ -69,7 +72,7 @@ export function ResponseViewer({ status, headers, body }: ResponseViewerProps) {
             dark:bg-zinc-950
           "
         >
-          {body || 'Empty response body'}
+          {body || t('emptyBody')}
         </pre>
       </div>
 
@@ -81,7 +84,7 @@ export function ResponseViewer({ status, headers, body }: ResponseViewerProps) {
               dark:text-zinc-400
             "
           >
-            Response Headers
+            {t('responseHeaders')}
           </span>
           <pre
             className="

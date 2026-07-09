@@ -2,6 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import { Parameter } from './types';
+import { useTranslations } from 'next-intl';
 
 interface ParameterRowProps {
   parameter: Parameter;
@@ -10,6 +11,8 @@ interface ParameterRowProps {
 }
 
 export function ParameterRow({ parameter, value, onChange }: ParameterRowProps) {
+  const t = useTranslations('Viewer');
+
   return (
     <div
       className="
@@ -50,7 +53,7 @@ export function ParameterRow({ parameter, value, onChange }: ParameterRowProps) 
 
       <Input
         className="mt-1 h-8 text-sm"
-        placeholder={parameter.schema?.type ? `Type: ${parameter.schema.type}` : 'Value'}
+        placeholder={parameter.schema?.type ? `${t('type')}: ${parameter.schema.type}` : t('value')}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />

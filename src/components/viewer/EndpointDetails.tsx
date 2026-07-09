@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Operation } from './types';
+import { Operation, Parameter } from './types';
 import { ParameterRow } from './ParameterRow';
 import { RequestBodyEditor } from './RequestBodyEditor';
 import { ResponseViewer } from './ResponseViewer';
+import { useTranslations } from 'next-intl';
 
 interface EndpointDetailsProps {
   path: string;
@@ -25,6 +26,36 @@ const methodColors: Record<string, string> = {
   head: 'bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400',
 };
 
+const buildFinalUrl = (
+  baseUrl: string,
+  path: string,
+  parameters: Parameter[],
+  paramValues: Record<string, string>
+) => {
+  let computedPath = path;
+
+  parameters
+    ?.filter((p) => p.in === 'path')
+    .forEach((p) => {
+      if (paramValues[p.name]) {
+        computedPath = computedPath.replace(`{${p.name}}`, encodeURIComponent(paramValues[p.name]));
+      }
+    });
+
+  const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+  const cleanPath = computedPath.startsWith('/') ? computedPath : `/${computedPath}`;
+
+  const queryParams = new URLSearchParams();
+  parameters
+    ?.filter((p) => p.in === 'query')
+    .forEach((p) => {
+      if (paramValues[p.name]) queryParams.append(p.name, paramValues[p.name]);
+    });
+
+  const queryString = queryParams.toString();
+  return queryString ? `${cleanBaseUrl}${cleanPath}?${queryString}` : `${cleanBaseUrl}${cleanPath}`;
+};
+
 export default function EndpointDetails({
   path,
   method,
@@ -40,35 +71,14 @@ export default function EndpointDetails({
     body: string;
   } | null>(null);
 
+  const t = useTranslations('Viewer');
+
   const handleParamChange = (name: string, value: string) => {
     setParamValues((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleGenerateCurl = () => {
-    let computedPath = path;
-
-    operation.parameters
-      ?.filter((p) => p.in === 'path')
-      .forEach((p) => {
-        if (paramValues[p.name]) {
-          computedPath = computedPath.replace(`{${p.name}}`, paramValues[p.name]);
-        }
-      });
-
-    const queryParams = operation.parameters
-      ?.filter((p) => p.in === 'query')
-      .map((p) =>
-        paramValues[p.name] ? `${p.name}=${encodeURIComponent(paramValues[p.name])}` : ''
-      )
-      .filter(Boolean)
-      .join('&');
-
-    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-    const cleanPath = computedPath.startsWith('/') ? computedPath : `/${computedPath}`;
-    const finalUrl = queryParams
-      ? `${cleanBaseUrl}${cleanPath}?${queryParams}`
-      : `${cleanBaseUrl}${cleanPath}`;
-
+    const finalUrl = buildFinalUrl(baseUrl, path, operation.parameters || [], paramValues);
     let curl = `curl -X ${method.toUpperCase()} "${finalUrl}"`;
 
     operation.parameters
@@ -78,6 +88,15 @@ export default function EndpointDetails({
           curl += ` \\\n  -H "${p.name}: ${paramValues[p.name]}"`;
         }
       });
+
+    const cookies = operation.parameters
+      ?.filter((p) => p.in === 'cookie' && paramValues[p.name])
+      .map((p) => `${p.name}=${paramValues[p.name]}`)
+      .join('; ');
+
+    if (cookies) {
+      curl += ` \\\n  -H "Cookie: ${cookies}"`;
+    }
 
     if (bodyValue) {
       curl += ` \\\n  -H "Content-Type: application/json" \\\n  -d '${bodyValue.replace(/'/g, "'\\''")}'`;
@@ -90,38 +109,67 @@ export default function EndpointDetails({
     setLoading(true);
     setResponse(null);
     try {
+      const finalUrl = buildFinalUrl(baseUrl, path, operation.parameters || [], paramValues);
+
+      const sendHeaders: Record<string, string> = {};
+      operation.parameters
+        ?.filter((p) => p.in === 'header' && paramValues[p.name])
+        .forEach((p) => {
+          sendHeaders[p.name] = paramValues[p.name];
+        });
+
+      const cookieString = operation.parameters
+        ?.filter((p) => p.in === 'cookie' && paramValues[p.name])
+        .map((p) => `${p.name}=${paramValues[p.name]}`)
+        .join('; ');
+
+      if (cookieString) {
+        sendHeaders['Cookie'] = cookieString;
+      }
+
+      let parsedBody: unknown = undefined;
+      if (bodyValue) {
+        try {
+          parsedBody = JSON.parse(bodyValue);
+        } catch {
+          setResponse({
+            status: 400,
+            headers: '',
+            body: t('invalidJson'),
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
       const res = await fetch('/api/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          baseUrl,
-          path,
+          url: finalUrl,
           method,
-          parameters: operation.parameters?.map((parameter) => ({
-            ...parameter,
-            value: paramValues[parameter.name] || '',
-          })),
-          body: bodyValue ? JSON.parse(bodyValue) : undefined,
+          headers: sendHeaders,
+          body: parsedBody,
         }),
       });
 
       const data = await res.json();
 
-      const responseHeaders: Record<string, string> = {};
-      res.headers.forEach((val, key) => {
-        responseHeaders[key] = val;
-      });
+      let formattedBody = data.body;
+      try {
+        formattedBody = JSON.stringify(JSON.parse(data.body), null, 2);
+      } catch {}
 
       setResponse({
-        status: res.status,
-        headers: JSON.stringify(responseHeaders, null, 2),
-        body: JSON.stringify(data, null, 2),
+        status: data.status,
+        headers: JSON.stringify(data.headers, null, 2),
+        body: formattedBody || t('emptyBody'),
       });
     } catch (err: unknown) {
       setResponse({
         status: 500,
         headers: '',
-        body: err instanceof Error ? err.message : 'Unknown Error during proxy request',
+        body: err instanceof Error ? err.message : t('proxyError'),
       });
     } finally {
       setLoading(false);
@@ -135,17 +183,17 @@ export default function EndpointDetails({
     <div className="flex h-full flex-col">
       <Tabs defaultValue="details" className="flex flex-1 flex-col">
         <TabsList className="mb-6 grid w-full grid-cols-4">
-          <TabsTrigger value="details">Details</TabsTrigger>
-          <TabsTrigger value="parameters">Parameters</TabsTrigger>
-          <TabsTrigger value="body">Request Body</TabsTrigger>
-          <TabsTrigger value="responses">Responses</TabsTrigger>
+          <TabsTrigger value="details">{t('details')}</TabsTrigger>
+          <TabsTrigger value="parameters">{t('parameters')}</TabsTrigger>
+          <TabsTrigger value="body">{t('requestBody')}</TabsTrigger>
+          <TabsTrigger value="responses">{t('responses')}</TabsTrigger>
         </TabsList>
 
         <div
           className="
-          mb-6 flex items-center justify-between border-b border-zinc-100 pb-4
-          dark:border-zinc-800
-        "
+            mb-6 flex items-center justify-between border-b border-zinc-100 pb-4
+            dark:border-zinc-800
+          "
         >
           <div className="flex items-center gap-3">
             <span
@@ -158,9 +206,9 @@ export default function EndpointDetails({
             </span>
             <h2
               className="
-              text-lg font-semibold text-zinc-900
-              dark:text-zinc-100
-            "
+                text-lg font-semibold text-zinc-900
+                dark:text-zinc-100
+              "
             >
               {path}
             </h2>
@@ -168,10 +216,10 @@ export default function EndpointDetails({
 
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleGenerateCurl}>
-              Code cURL
+              {t('curl')}
             </Button>
             <Button size="sm" onClick={handleExecute} disabled={loading}>
-              {loading ? 'Executing...' : 'Try it out'}
+              {loading ? t('executing') : t('try')}
             </Button>
           </div>
         </div>
@@ -181,37 +229,37 @@ export default function EndpointDetails({
             <div>
               <h3
                 className="
-                mb-2 text-sm font-semibold text-zinc-700
-                dark:text-zinc-300
-              "
+                  mb-2 text-sm font-semibold text-zinc-700
+                  dark:text-zinc-300
+                "
               >
-                Summary
+                {t('summary')}
               </h3>
               <p
                 className="
-                text-sm text-zinc-600
-                dark:text-zinc-400
-              "
+                  text-sm text-zinc-600
+                  dark:text-zinc-400
+                "
               >
-                {operation.summary || 'No summary'}
+                {operation.summary || t('noSummary')}
               </p>
             </div>
             <div>
               <h3
                 className="
-                mb-2 text-sm font-semibold text-zinc-700
-                dark:text-zinc-300
-              "
+                  mb-2 text-sm font-semibold text-zinc-700
+                  dark:text-zinc-300
+                "
               >
-                Description
+                {t('description')}
               </h3>
               <p
                 className="
-                text-sm whitespace-pre-wrap text-zinc-600
-                dark:text-zinc-400
-              "
+                  text-sm whitespace-pre-wrap text-zinc-600
+                  dark:text-zinc-400
+                "
               >
-                {operation.description || 'No description'}
+                {operation.description || t('noDescription')}
               </p>
             </div>
           </div>
@@ -232,11 +280,11 @@ export default function EndpointDetails({
           ) : (
             <p
               className="
-              text-sm text-zinc-500
-              dark:text-zinc-400
-            "
+                text-sm text-zinc-500
+                dark:text-zinc-400
+              "
             >
-              No parameters
+              {t('noParameters')}
             </p>
           )}
         </TabsContent>
@@ -251,11 +299,11 @@ export default function EndpointDetails({
           ) : (
             <p
               className="
-              text-sm text-zinc-500
-              dark:text-zinc-400
-            "
+                text-sm text-zinc-500
+                dark:text-zinc-400
+              "
             >
-              No request body
+              {t('noRequestBody')}
             </p>
           )}
         </TabsContent>
@@ -283,9 +331,9 @@ export default function EndpointDetails({
 
                     <div
                       className="
-                      text-sm font-medium text-zinc-800
-                      dark:text-zinc-200
-                    "
+                        text-sm font-medium text-zinc-800
+                        dark:text-zinc-200
+                      "
                     >
                       {response.description}
                     </div>
@@ -295,12 +343,14 @@ export default function EndpointDetails({
                     Object.entries(response.content).map(([contentType, content]) => (
                       <div key={contentType} className="mt-4 space-y-3">
                         <div>
-                          <p className="mb-1 text-xs font-semibold text-zinc-500">Content-Type</p>
+                          <p className="mb-1 text-xs font-semibold text-zinc-500">
+                            {t('contentType')}
+                          </p>
                           <pre
                             className="
-                            rounded-sm bg-zinc-100 p-2 text-xs
-                            dark:bg-zinc-800
-                          "
+                              rounded-sm bg-zinc-100 p-2 text-xs
+                              dark:bg-zinc-800
+                            "
                           >
                             {contentType}
                           </pre>
@@ -308,12 +358,14 @@ export default function EndpointDetails({
 
                         {content.schema && (
                           <div>
-                            <p className="mb-1 text-xs font-semibold text-zinc-500">Schema</p>
+                            <p className="mb-1 text-xs font-semibold text-zinc-500">
+                              {t('schema')}
+                            </p>
                             <pre
                               className="
-                              overflow-auto rounded-sm bg-zinc-100 p-2 text-xs
-                              dark:bg-zinc-800
-                            "
+                                overflow-auto rounded-sm bg-zinc-100 p-2 text-xs
+                                dark:bg-zinc-800
+                              "
                             >
                               {JSON.stringify(content.schema, null, 2)}
                             </pre>
@@ -322,12 +374,14 @@ export default function EndpointDetails({
 
                         {content.example && (
                           <div>
-                            <p className="mb-1 text-xs font-semibold text-zinc-500">Example</p>
+                            <p className="mb-1 text-xs font-semibold text-zinc-500">
+                              {t('example')}
+                            </p>
                             <pre
                               className="
-                              overflow-auto rounded-sm bg-zinc-100 p-2 text-xs
-                              dark:bg-zinc-800
-                            "
+                                overflow-auto rounded-sm bg-zinc-100 p-2 text-xs
+                                dark:bg-zinc-800
+                              "
                             >
                               {JSON.stringify(content.example, null, 2)}
                             </pre>
@@ -349,14 +403,25 @@ export default function EndpointDetails({
               )}
             </div>
           ) : (
-            <p
-              className="
-              text-sm text-zinc-500
-              dark:text-zinc-400
-            "
-            >
-              No responses
-            </p>
+            <div className="space-y-4">
+              <p
+                className="
+                  text-sm text-zinc-500
+                  dark:text-zinc-400
+                "
+              >
+                {t('noResponses')}
+              </p>
+              {response && (
+                <div className="mt-6">
+                  <ResponseViewer
+                    status={response.status}
+                    headers={response.headers}
+                    body={response.body}
+                  />
+                </div>
+              )}
+            </div>
           )}
         </TabsContent>
       </Tabs>
