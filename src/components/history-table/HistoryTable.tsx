@@ -40,6 +40,8 @@ interface DataTableProps<TData> {
 }
 
 export default function HistoryTable<TData, TValue>({ data }: DataTableProps<TData>) {
+  'use no memo';
+
   const t = useTranslations('HistoryPage');
 
   const columns = useColumns() as ColumnDef<TData, TValue>[];
@@ -47,6 +49,7 @@ export default function HistoryTable<TData, TValue>({ data }: DataTableProps<TDa
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
