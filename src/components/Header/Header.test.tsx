@@ -22,7 +22,7 @@ vi.mock('@/i18n/navigation', () => ({
   ),
 }));
 
-vi.mock('@/components/language-switcher/LanguageSwitcher', () => ({
+vi.mock('@/components/LanguageSwitcher/LanguageSwitcher', () => ({
   default: () => <div data-testid="language-switcher" />,
 }));
 

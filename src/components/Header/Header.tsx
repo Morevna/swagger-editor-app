@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/button';
-import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
+import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 import { createClient } from '@/lib/supabase/server';
 import { signOutAction } from '@/lib/actions/auth';
 import { Suspense } from 'react';
