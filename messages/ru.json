@@ -2,9 +2,9 @@
   "HomePage": {
     "title": "Скоро здесь будет эдитор!"
   },
-
   "Layout": {
     "about": "О проекте",
+    "History": "История",
     "signIn": "Войти",
     "signUp": "Регистрация",
     "history": "История",
@@ -68,7 +68,6 @@
     "SIGNUP_FAILED": "Регистрация не удалась",
     "EMAIL_TAKEN": "Этот адрес электронной почты уже занят."
   },
-
   "signInForm": {
     "cardTitle": "Вход в аккаунт",
     "cardDescription": "Пожалуйста, предоставьте свои учетные данные.",
@@ -78,7 +77,6 @@
     "passwordPlaceholder": "********",
     "buttonSubmit": "Войти"
   },
-
   "signUpForm": {
     "cardTitle": "Регистрация",
     "cardDescription": "Зарегистрируйтесь заполнив почту и пароль",
@@ -89,5 +87,51 @@
     "confirmPasswordLabel": "Подтвердите Пароль",
     "confirmPasswordPlaceholder": "********",
     "buttonSubmit": "Зарегистрироваться"
+  },
+  "HistoryPage": {
+    "title": "Все запросы",
+    "columns": "Колонки",
+    "noResults": "Нет результатов за это время",
+    "previous": "Предыдущая",
+    "next": "Следующая",
+    "method": "Метод",
+    "endpoint": "Эндпоинт",
+    "status": "Статус",
+    "duration": "Длительность",
+    "requestSize": "Размер запроса",
+    "responseSize": "Размер ответа",
+    "errorDetails": "Детали ошибки",
+    "time": "Время",
+    "empty": "Пусто",
+    "emptyMessage": "Пожалуйста, сделайте пару запросов",
+    "emptyButton": "Сделать запрос"
+  },
+  "FilterSidebar": {
+    "dataFilterHeader": "История",
+    "methodFilterHeader": "Метод",
+    "statusFilterHeader": "Статус",
+    "allMethods": "Все",
+    "GET": "GET",
+    "POST": "POST",
+    "PUT": "PUT",
+    "DELETE": "DELETE",
+    "PATCH": "PATCH",
+    "HEAD": "HEAD",
+    "OPTIONS": "OPTIONS",
+    "allTime": "Всё время",
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "lastWeek": "Последние 7 дней",
+    "lastMonth": "Последние 30 дней",
+    "allStatuses": "All statuses",
+    "1xx": "Информационные",
+    "2xx": "Успешные",
+    "3xx": "Сообщения о перенаправлении",
+    "4xx": "Ошибки клиента",
+    "5xx": "Ошибки сервера"
+  },
+  "ErrorHistory": {
+    "message": "Что-то пошло не так!",
+    "button": "Попробуйте еще раз"
   }
 }

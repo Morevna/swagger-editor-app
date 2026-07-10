@@ -6,20 +6,21 @@ export default function Footer() {
 
   return (
     <footer className="border-t bg-slate-950 px-6 py-4 text-sm text-white">
-      <div className="flex items-center justify-between">
-        <a
-          href="https://rs.school/courses/reactjs"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="
-            transition-colors
-            hover:text-blue-400
-          "
-        >
-          {t('footerText')}
-        </a>
-
-        <div className="flex gap-10">
+      <div className="grid w-full grid-cols-3">
+        <div>
+          <a
+            href="https://rs.school/courses/reactjs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              transition-colors
+              hover:text-blue-400
+            "
+          >
+            {t('footerText')}
+          </a>
+        </div>
+        <div className="flex justify-center gap-10">
           <a
             href="https://github.com/AlexLalalala"
             target="_blank"
@@ -55,15 +56,17 @@ export default function Footer() {
           </a>
         </div>
 
-        <Link
-          href="/about"
-          className="
-            transition-colors
-            hover:text-blue-400
-          "
-        >
-          {t('about')}
-        </Link>
+        <div className="flex justify-end">
+          <Link
+            href="/about"
+            className="
+              transition-colors
+              hover:text-blue-400
+            "
+          >
+            {t('about')}
+          </Link>
+        </div>
       </div>
     </footer>
   );

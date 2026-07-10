@@ -6,6 +6,7 @@ import LanguageSwitcher from '@/components/language-switcher/LanguageSwitcher';
 import { createClient } from '@/lib/supabase/server';
 import { signOutAction } from '@/lib/actions/auth';
 import { Suspense } from 'react';
+import { Skeleton } from '../ui/skeleton';
 
 export default async function Header() {
   const t = await getTranslations('Layout');
@@ -34,7 +35,7 @@ export default async function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Suspense fallback={null}>
+          <Suspense fallback={<Skeleton className="h-8 w-20" />}>
             <LanguageSwitcher />
           </Suspense>
 

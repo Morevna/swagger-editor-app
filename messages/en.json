@@ -4,6 +4,7 @@
   },
   "Layout": {
     "about": "About",
+    "History": "History",
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "history": "History",
@@ -67,7 +68,6 @@
     "SIGNUP_FAILED": "Sign Up failed",
     "EMAIL_TAKEN": "This email if already taken"
   },
-
   "signInForm": {
     "cardTitle": "Sign In",
     "cardDescription": "Please provide your credentials",
@@ -77,7 +77,6 @@
     "passwordPlaceholder": "********",
     "buttonSubmit": "Sign In"
   },
-
   "signUpForm": {
     "cardTitle": "Sign Up",
     "cardDescription": "Please provide your credentials",
@@ -88,5 +87,51 @@
     "confirmPasswordLabel": "Confirm Password",
     "confirmPasswordPlaceholder": "********",
     "buttonSubmit": "Sign Up"
+  },
+  "HistoryPage": {
+    "title": "All Requests",
+    "columns": "Columns",
+    "noResults": "No results for this time",
+    "previous": "Previous",
+    "next": "Next",
+    "method": "Method",
+    "endpoint": "Endpoint",
+    "status": "Status",
+    "duration": "Duration",
+    "requestSize": "Request size",
+    "responseSize": "Response size",
+    "errorDetails": "Error details",
+    "time": "Time",
+    "empty": "Empty",
+    "emptyMessage": "Please make a couple of requests",
+    "emptyButton": "Let's go"
+  },
+  "FilterSidebar": {
+    "dataFilterHeader": "History",
+    "methodFilterHeader": "Method",
+    "statusFilterHeader": "Status",
+    "allMethods": "All",
+    "GET": "GET",
+    "POST": "POST",
+    "PUT": "PUT",
+    "DELETE": "DELETE",
+    "PATCH": "PATCH",
+    "HEAD": "HEAD",
+    "OPTIONS": "OPTIONS",
+    "allTime": "All time",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "lastWeek": "Last 7 days",
+    "lastMonth": "Last 30 days",
+    "allStatuses": "All statuses",
+    "1xx": "Informational",
+    "2xx": "Successful",
+    "3xx": "Redirection messages",
+    "4xx": "Client errors",
+    "5xx": "Server errors"
+  },
+  "ErrorHistory": {
+    "message": "Something went wrong!",
+    "button": "Try again"
   }
 }
