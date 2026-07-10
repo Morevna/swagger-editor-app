@@ -5,20 +5,150 @@ import { useTranslations } from 'next-intl';
 import Editor from '@monaco-editor/react';
 import { parseSchema, validateSchema, detectFormat, convertFormat } from '../../lib/editor-utils';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { OpenApiSchema } from '../viewer/types';
 
 export type SchemaFormat = 'json' | 'yaml';
 
 interface SwaggerEditorProps {
-  onSchemaChange: (parsedData: unknown | null, format: SchemaFormat) => void;
+  onSchemaChange: (parsedData: OpenApiSchema | null) => void;
 }
 
 const defaultSchema = {
   openapi: '3.0.0',
+
   info: {
-    title: 'Sample API',
+    title: 'JSONPlaceholder Demo API',
     version: '1.0.0',
   },
-  paths: {},
+
+  servers: [
+    {
+      url: 'https://jsonplaceholder.typicode.com',
+    },
+  ],
+
+  paths: {
+    '/posts/{id}': {
+      get: {
+        summary: 'Get post',
+
+        description: 'Returns one post',
+
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            description: 'Post ID',
+
+            schema: {
+              type: 'integer',
+            },
+          },
+
+          {
+            name: '_expand',
+            in: 'query',
+
+            description: 'Expand user',
+
+            schema: {
+              type: 'string',
+            },
+          },
+
+          {
+            name: 'Authorization',
+
+            in: 'header',
+
+            description: 'Bearer token',
+
+            schema: {
+              type: 'string',
+            },
+          },
+
+          {
+            name: 'session',
+
+            in: 'cookie',
+
+            description: 'Session id',
+
+            schema: {
+              type: 'string',
+            },
+          },
+        ],
+
+        responses: {
+          200: {
+            description: 'Successful response',
+
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                },
+
+                example: {
+                  id: 1,
+                  title: 'Sample title',
+                  body: 'Sample body',
+                },
+              },
+            },
+          },
+
+          404: {
+            description: 'Post not found',
+          },
+        },
+      },
+    },
+
+    '/posts': {
+      post: {
+        summary: 'Create post',
+
+        description: 'Creates a new post',
+
+        requestBody: {
+          required: true,
+
+          description: 'New post',
+
+          content: {
+            'application/json': {
+              example: {
+                title: 'New title',
+                body: 'Post body',
+                userId: 1,
+              },
+            },
+          },
+        },
+
+        responses: {
+          201: {
+            description: 'Created',
+
+            content: {
+              'application/json': {
+                example: {
+                  id: 101,
+                  title: 'New title',
+                  body: 'Post body',
+                  userId: 1,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
 
 const INITIAL_TEXT = JSON.stringify(defaultSchema, null, 2);
@@ -27,11 +157,9 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
   const t = useTranslations('Editor');
 
   const [value, setValue] = useState(INITIAL_TEXT);
-
   const [format, setFormat] = useState<SchemaFormat>(() => detectFormat(INITIAL_TEXT));
-
   const [error, setError] = useState<string | null>(() => {
-    const parsed = parseSchema(INITIAL_TEXT);
+    const parsed = parseSchema<OpenApiSchema>(INITIAL_TEXT);
     if (parsed.error) return t(`errors.${parsed.error}`);
 
     const validationError = validateSchema(parsed.data);
@@ -41,12 +169,11 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
   });
 
   useEffect(() => {
-    const parsed = parseSchema(INITIAL_TEXT);
-    const detected = detectFormat(INITIAL_TEXT);
+    const parsed = parseSchema<OpenApiSchema>(INITIAL_TEXT);
     if (!parsed.error && !validateSchema(parsed.data)) {
-      onSchemaChange(parsed.data, detected);
+      onSchemaChange(parsed.data);
     } else {
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
     }
   }, [onSchemaChange]);
 
@@ -57,15 +184,15 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
 
     if (!currentText.trim()) {
       setError(null);
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
       return;
     }
 
-    const parsed = parseSchema(currentText);
+    const parsed = parseSchema<OpenApiSchema>(currentText);
 
     if (parsed.error) {
       setError(t(`errors.${parsed.error}`));
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
       return;
     }
 
@@ -73,12 +200,12 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
 
     if (validationError) {
       setError(t(`errors.${validationError}`));
-      onSchemaChange(null, detected);
+      onSchemaChange(null);
       return;
     }
 
     setError(null);
-    onSchemaChange(parsed.data, detected);
+    onSchemaChange(parsed.data);
   }
 
   function handleEditorChange(text: string | undefined) {
