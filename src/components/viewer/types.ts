@@ -1,3 +1,11 @@
+export const API_ERROR_CODES = {
+  URL_REQUIRED: 'URL_REQUIRED',
+  FETCH_FAILED: 'FETCH_FAILED',
+  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+} as const;
+
+export type ApiErrorCode = (typeof API_ERROR_CODES)[keyof typeof API_ERROR_CODES];
+
 export interface OpenApiSchema {
   openapi?: string;
   swagger?: string;

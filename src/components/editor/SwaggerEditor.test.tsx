@@ -94,7 +94,7 @@ describe('SwaggerEditor – full coverage suite', () => {
 
     expect(await screen.findByTestId('editor-error')).toBeInTheDocument();
     expect(screen.getByText('errors.PARSE_ERROR')).toBeInTheDocument();
-    expect(onSchemaChange).toHaveBeenCalledWith(null, 'json');
+    expect(onSchemaChange).toHaveBeenCalledWith(null);
   });
 
   it('shows a schema validation error', async () => {
@@ -139,7 +139,7 @@ describe('SwaggerEditor – full coverage suite', () => {
       target: { value: '' },
     });
 
-    expect(onSchemaChange).toHaveBeenCalledWith(null, 'json');
+    expect(onSchemaChange).toHaveBeenCalledWith(null);
   });
 
   it('displays an error upon unsuccessful conversion', () => {

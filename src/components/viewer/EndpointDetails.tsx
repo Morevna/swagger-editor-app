@@ -8,7 +8,7 @@ import { ParameterRow } from './ParameterRow';
 import { RequestBodyEditor } from './RequestBodyEditor';
 import { ResponseViewer } from './ResponseViewer';
 import { useTranslations } from 'next-intl';
-import { proxyRequest } from '@/lib/actions/proxy';
+import { executeApiRequest } from '@/lib/actions/makeApiRequest';
 
 interface EndpointDetailsProps {
   path: string;
@@ -143,7 +143,7 @@ export default function EndpointDetails({
         }
       }
 
-      const data = await proxyRequest({
+      const data = await executeApiRequest({
         url: finalUrl,
         method,
         headers: sendHeaders,
@@ -151,12 +151,22 @@ export default function EndpointDetails({
       });
 
       let formattedBody = data.body;
+
+      if (data.errorCode) {
+        setResponse({
+          status: 502,
+          headers: '{"Content-Type": "application/json"}',
+          body: JSON.stringify({ error: 'Proxy integration error', details: data.body }, null, 2),
+        });
+        return;
+      }
+
       try {
         formattedBody = JSON.stringify(JSON.parse(data.body), null, 2);
       } catch {}
 
       setResponse({
-        status: data.status,
+        status: data.status || 200,
         headers: JSON.stringify(data.headers, null, 2),
         body: formattedBody || t('emptyBody'),
       });

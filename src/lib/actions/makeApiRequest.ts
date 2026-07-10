@@ -1,5 +1,7 @@
 'use server';
 
+import { API_ERROR_CODES, ApiErrorCode } from '../../components/viewer/types';
+
 interface ProxyRequestArgs {
   url: string;
   method: string;
@@ -8,13 +10,14 @@ interface ProxyRequestArgs {
 }
 
 interface ProxyResponse {
-  ok: boolean;
-  status: number;
-  headers: Record<string, string>;
+  success: boolean;
+  status?: number;
+  headers?: Record<string, string>;
   body: string;
+  errorCode?: ApiErrorCode;
 }
 
-export async function proxyRequest({
+export async function executeApiRequest({
   url,
   method,
   headers: clientHeaders,
@@ -23,15 +26,13 @@ export async function proxyRequest({
   try {
     if (!url) {
       return {
-        ok: false,
-        status: 400,
-        headers: {},
-        body: JSON.stringify({ error: 'URL is required' }),
+        success: false,
+        body: '',
+        errorCode: API_ERROR_CODES.URL_REQUIRED,
       };
     }
 
     const headers = new Headers(clientHeaders);
-
     if (body && !headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json');
     }
@@ -60,20 +61,16 @@ export async function proxyRequest({
     });
 
     return {
-      ok: targetResponse.ok,
+      success: targetResponse.ok,
       status: targetResponse.status,
       headers: targetHeaders,
       body: responseData,
     };
   } catch (error: unknown) {
     return {
-      ok: false,
-      status: 502,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        error: 'Proxy integration error',
-        details: error instanceof Error ? error.message : String(error),
-      }),
+      success: false,
+      body: error instanceof Error ? error.message : String(error),
+      errorCode: API_ERROR_CODES.FETCH_FAILED,
     };
   }
 }
