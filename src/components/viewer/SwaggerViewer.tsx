@@ -75,7 +75,7 @@ export default function SwaggerViewer({ schema }: SwaggerViewerProps) {
         />
       </div>
 
-      <div className="overflow-y-auto p-6">
+      <div className="overflow-y-auto p-6" data-testid="endpoint-details">
         {operation && (
           <EndpointDetails
             key={`${currentMethod}-${currentPath}`}
