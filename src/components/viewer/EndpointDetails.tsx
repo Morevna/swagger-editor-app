@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Operation, StatusType } from './types';
 import { useTranslations } from 'next-intl';
-import { executeApiRequest } from '@/lib/actions/makeApiRequest';
 import { METHOD_COLORS } from '@/constants/columnsStyles';
 import { buildFinalUrl } from '@/lib/utils/viewer/buildFinalUrl';
 import { generateCurl } from '@/lib/utils/viewer/generateCurl';
@@ -16,6 +15,7 @@ import BodyTab from './details-tabs/BodyTab';
 import ResponsesTab from './details-tabs/ResponsesTab';
 import DetailsTab from './details-tabs/DetailsTab';
 import { buildRequestHeaders } from '@/lib/utils/viewer/buildRequestHeaders';
+import { executeAndLogRequest } from '@/lib/actions/executeAndLogRequest';
 
 interface EndpointDetailsProps {
   path: string;
@@ -73,9 +73,9 @@ export default function EndpointDetails({
         }
       }
 
-      const data = await executeApiRequest({
+      const data = await executeAndLogRequest({
         url: finalUrl,
-        method: method,
+        method,
         headers: sendHeaders,
         body: parsedBody,
       });

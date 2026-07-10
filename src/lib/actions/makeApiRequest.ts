@@ -1,21 +1,6 @@
 'use server';
 
-import { API_ERROR_CODES, ApiErrorCode } from '../../components/viewer/types';
-
-interface ProxyRequestArgs {
-  url: string;
-  method: string;
-  headers?: Record<string, string>;
-  body?: unknown;
-}
-
-interface ProxyResponse {
-  success: boolean;
-  status?: number;
-  headers?: Record<string, string>;
-  body: string;
-  errorCode?: ApiErrorCode;
-}
+import { API_ERROR_CODES, ProxyRequestArgs, ProxyResponse } from '../../components/viewer/types';
 
 export async function executeApiRequest({
   url,
@@ -60,11 +45,17 @@ export async function executeApiRequest({
       targetHeaders[key] = val;
     });
 
+    let errorDetails = null;
+    if (!targetResponse.ok) {
+      errorDetails = responseData;
+    }
+
     return {
       success: targetResponse.ok,
       status: targetResponse.status,
       headers: targetHeaders,
       body: responseData,
+      errorDetails: errorDetails,
     };
   } catch (error: unknown) {
     return {

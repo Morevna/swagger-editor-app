@@ -67,3 +67,19 @@ export type StatusType = {
   headers: string;
   body: string;
 } | null;
+
+export interface ProxyRequestArgs {
+  url: string;
+  method: string;
+  headers?: Record<string, string>;
+  body?: unknown;
+}
+
+export interface ProxyResponse {
+  success: boolean;
+  status?: number;
+  headers?: Record<string, string>;
+  body: string;
+  errorCode?: ApiErrorCode;
+  errorDetails?: string | null;
+}
