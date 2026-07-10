@@ -1,4 +1,3 @@
-// components/SkeletonTable.tsx
 import { Skeleton } from '@/components/ui/skeleton';
 import { SKELETON_SIDEBAR_ROWS, SKELETON_COLUMNS, SKELETON_ROWS } from '@/constants/tableSizes';
 
