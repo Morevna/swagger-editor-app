@@ -61,3 +61,9 @@ export interface Operation {
   requestBody?: RequestBody;
   responses?: Record<string, ResponseItem>;
 }
+
+export type StatusType = {
+  status: number;
+  headers: string;
+  body: string;
+} | null;
