@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { signOutAction } from '@/lib/actions/auth';
 import { Suspense } from 'react';
 import { Skeleton } from '../ui/skeleton';
+import { StickyHeaderShell } from './StickyHeaderShell';
 
 export default async function Header() {
   const t = await getTranslations('Layout');
@@ -15,7 +16,7 @@ export default async function Header() {
   const isSignedIn = Boolean(data?.claims);
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-slate-950 text-white">
+    <StickyHeaderShell>
       <div className="flex h-14 items-center justify-between px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -72,6 +73,6 @@ export default async function Header() {
           )}
         </div>
       </div>
-    </header>
+    </StickyHeaderShell>
   );
 }
