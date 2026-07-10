@@ -12,6 +12,7 @@ import { LogEntry, Method } from '@/types/logs';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import { Badge } from '../ui/badge';
 
 export const useColumns = (): ColumnDef<LogEntry>[] => {
   const t = useTranslations('HistoryPage');
@@ -26,14 +27,13 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
         const method = row.getValue('method') as Method;
         const styles = METHOD_COLORS[method];
         return (
-          <span
+          <Badge
             className={`
-              font-bold
               ${styles}
             `}
           >
             {method}
-          </span>
+          </Badge>
         );
       },
     },
@@ -54,14 +54,13 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
         const group = getStatusGroup(status);
         const styles = STATUS_GROUP_COLORS[group];
         return (
-          <span
+          <Badge
             className={`
-              font-bold
               ${styles}
             `}
           >
             {status}
-          </span>
+          </Badge>
         );
       },
     },
