@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import AboutPage from './page';
+import AboutView from './AboutView';
 
 vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn(() =>
@@ -13,14 +13,68 @@ vi.mock('next-intl/server', () => ({
         links: 'Links',
       };
 
-      return translations[key];
+      if (translations[key]) return translations[key];
+
+      if (key.includes('.')) {
+        return key.split('.').pop() || key;
+      }
+
+      return key;
     })
   ),
 }));
 
-describe('AboutPage', () => {
+vi.mock('next/image', () => ({
+  default: ({ src, alt, width, height, className }: any) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={src} alt={alt} width={width} height={height} className={className} />
+  ),
+}));
+
+vi.mock('@/constants/about', () => ({
+  team: [
+    {
+      name: 'Alexander',
+      role: 'frontend',
+      github: 'https://github.com/AlexLalalala',
+      avatar: '/alex.png',
+    },
+    { name: 'Maxim', role: 'frontend', github: 'https://github.com/orgris', avatar: '/maxim.png' },
+    { name: 'Maria', role: 'frontend', github: 'https://github.com/Morevna', avatar: '/maria.png' },
+  ],
+  technologies: [
+    { name: 'React', icon: () => null, className: '' },
+    { name: 'Next.js', icon: () => null, className: '' },
+  ],
+  links: [
+    {
+      name: 'RS School',
+      description: 'School website',
+      href: 'https://rs.school/',
+      icon: () => null,
+      className: '',
+    },
+    {
+      name: 'React Course',
+      description: 'Course page',
+      href: 'https://rs.school/courses/reactjs',
+      icon: () => null,
+      className: '',
+    },
+    {
+      name: 'Repository',
+      description: 'Project source code',
+      href: 'https://github.com/AlexLalalala/swagger-editor-app',
+      icon: () => null,
+      className: '',
+    },
+  ],
+}));
+
+describe('AboutView', () => {
   async function renderPage() {
-    render(await AboutPage());
+    const ResultJSX = await AboutView();
+    render(ResultJSX);
   }
 
   it('renders information about the project and RS School course', async () => {
@@ -60,7 +114,6 @@ describe('AboutPage', () => {
     await renderPage();
 
     const links = screen.getAllByRole('link');
-
     const hrefs = links.map((link) => link.getAttribute('href'));
 
     expect(hrefs).toContain('https://rs.school/');
