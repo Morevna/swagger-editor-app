@@ -18,6 +18,7 @@ export default defineConfig({
         functions: 50,
         lines: 50,
       },
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
       exclude: [
         'node_modules',
         '.next',
