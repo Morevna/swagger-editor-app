@@ -15,13 +15,18 @@
   "Editor": {
     "title": "Editor",
     "noErrors": "No errors detected",
+    "save": "Save",
+    "saving": "Saving...",
     "errors": {
       "PARSE_ERROR": "Check for correctness.",
       "INVALID_FORMAT": "Cannot convert invalid format",
       "NOT_AN_OBJECT": "Specification must be a valid JSON or YAML object",
       "MISSING_OPENAPI_VERSION": "Missing mandatory 'openapi' or 'swagger' version field",
       "MISSING_INFO": "Missing mandatory 'info' block with API metadata",
-      "MISSING_PATHS": "Missing mandatory 'paths' object for API endpoints"
+      "MISSING_PATHS": "Missing mandatory 'paths' object for API endpoints",
+      "INVALID_PAYLOAD": "The spec is too long",
+      "UNAUTHENTICATED": "Unauthenticated",
+      "SAVE_FAILED": "Saved failed. Try again"
     }
   },
   "Viewer": {

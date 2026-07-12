@@ -6,176 +6,45 @@ import Editor from '@monaco-editor/react';
 import { parseSchema, validateSchema, detectFormat, convertFormat } from '../../lib/editor-utils';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { OpenApiSchema } from '../viewer/types';
+import useSaveSpec from '@/lib/hooks/useSaveSpec';
 
 export type SchemaFormat = 'json' | 'yaml';
 
-interface SwaggerEditorProps {
+export interface SwaggerEditorProps {
   onSchemaChange: (parsedData: OpenApiSchema | null) => void;
+  initialSchema: string;
+  isSignedIn: boolean;
 }
 
-const defaultSchema = {
-  openapi: '3.0.0',
-
-  info: {
-    title: 'JSONPlaceholder Demo API',
-    version: '1.0.0',
-  },
-
-  servers: [
-    {
-      url: 'https://jsonplaceholder.typicode.com',
-    },
-  ],
-
-  paths: {
-    '/posts/{id}': {
-      get: {
-        summary: 'Get post',
-
-        description: 'Returns one post',
-
-        parameters: [
-          {
-            name: 'id',
-            in: 'path',
-            required: true,
-            description: 'Post ID',
-
-            schema: {
-              type: 'integer',
-            },
-          },
-
-          {
-            name: '_expand',
-            in: 'query',
-
-            description: 'Expand user',
-
-            schema: {
-              type: 'string',
-            },
-          },
-
-          {
-            name: 'Authorization',
-
-            in: 'header',
-
-            description: 'Bearer token',
-
-            schema: {
-              type: 'string',
-            },
-          },
-
-          {
-            name: 'session',
-
-            in: 'cookie',
-
-            description: 'Session id',
-
-            schema: {
-              type: 'string',
-            },
-          },
-        ],
-
-        responses: {
-          200: {
-            description: 'Successful response',
-
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                },
-
-                example: {
-                  id: 1,
-                  title: 'Sample title',
-                  body: 'Sample body',
-                },
-              },
-            },
-          },
-
-          404: {
-            description: 'Post not found',
-          },
-        },
-      },
-    },
-
-    '/posts': {
-      post: {
-        summary: 'Create post',
-
-        description: 'Creates a new post',
-
-        requestBody: {
-          required: true,
-
-          description: 'New post',
-
-          content: {
-            'application/json': {
-              example: {
-                title: 'New title',
-                body: 'Post body',
-                userId: 1,
-              },
-            },
-          },
-        },
-
-        responses: {
-          201: {
-            description: 'Created',
-
-            content: {
-              'application/json': {
-                example: {
-                  id: 101,
-                  title: 'New title',
-                  body: 'Post body',
-                  userId: 1,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
+const evaluateSchema = (text: string): { data: OpenApiSchema | null; errorKey: string | null } => {
+  const parsed = parseSchema<OpenApiSchema>(text);
+  if (parsed.error) return { data: null, errorKey: parsed.error };
+  const validationError = validateSchema(parsed.data);
+  if (validationError) return { data: null, errorKey: validationError };
+  return { data: parsed.data, errorKey: null };
 };
 
-const INITIAL_TEXT = JSON.stringify(defaultSchema, null, 2);
-
-export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
+export default function SwaggerEditor({
+  onSchemaChange,
+  initialSchema,
+  isSignedIn,
+}: SwaggerEditorProps) {
   const t = useTranslations('Editor');
 
-  const [value, setValue] = useState(INITIAL_TEXT);
-  const [format, setFormat] = useState<SchemaFormat>(() => detectFormat(INITIAL_TEXT));
+  const [value, setValue] = useState(initialSchema);
+  const [format, setFormat] = useState<SchemaFormat>(() => detectFormat(initialSchema));
   const [error, setError] = useState<string | null>(() => {
-    const parsed = parseSchema<OpenApiSchema>(INITIAL_TEXT);
-    if (parsed.error) return t(`errors.${parsed.error}`);
-
-    const validationError = validateSchema(parsed.data);
-    if (validationError) return t(`errors.${validationError}`);
-
+    const { errorKey } = evaluateSchema(initialSchema);
+    if (errorKey) return t(`errors.${errorKey}`);
     return null;
   });
 
+  const { save, isPending, saveError, isDirty } = useSaveSpec(initialSchema, isSignedIn);
+
   useEffect(() => {
-    const parsed = parseSchema<OpenApiSchema>(INITIAL_TEXT);
-    if (!parsed.error && !validateSchema(parsed.data)) {
-      onSchemaChange(parsed.data);
-    } else {
-      onSchemaChange(null);
-    }
-  }, [onSchemaChange]);
+    const { data } = evaluateSchema(initialSchema);
+    onSchemaChange(data);
+  }, [initialSchema, onSchemaChange]);
 
   function processSchema(currentText: string) {
     const detected = detectFormat(currentText);
@@ -188,24 +57,16 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
       return;
     }
 
-    const parsed = parseSchema<OpenApiSchema>(currentText);
+    const { data, errorKey } = evaluateSchema(currentText);
 
-    if (parsed.error) {
-      setError(t(`errors.${parsed.error}`));
-      onSchemaChange(null);
-      return;
-    }
-
-    const validationError = validateSchema(parsed.data);
-
-    if (validationError) {
-      setError(t(`errors.${validationError}`));
+    if (errorKey) {
+      setError(t(`errors.${errorKey}`));
       onSchemaChange(null);
       return;
     }
 
     setError(null);
-    onSchemaChange(parsed.data);
+    onSchemaChange(data);
   }
 
   function handleEditorChange(text: string | undefined) {
@@ -253,56 +114,78 @@ export default function SwaggerEditor({ onSchemaChange }: SwaggerEditorProps) {
           {t('title')}
         </span>
 
-        <div
-          className="
-            flex rounded-md bg-zinc-200 p-0.5 text-xs font-medium
-            dark:bg-zinc-800
-          "
-        >
+        <div className="flex text-xs font-medium">
+          {saveError && (
+            <div className="flex items-center gap-1.5 text-red-500">{t(`errors.${saveError}`)}</div>
+          )}
           <button
             type="button"
-            aria-pressed={format === 'json'}
-            onClick={() => handleFormatToggle('json')}
-            className={`
-              cursor-pointer rounded-sm px-3 py-1 transition-all
-              ${
-                format === 'json'
-                  ? `
-                    bg-white text-black shadow-sm
-                    dark:bg-zinc-700 dark:text-white
-                  `
-                  : `
-                    text-zinc-600
-                    hover:text-zinc-900
-                    dark:text-zinc-400
-                  `
-              }
-            `}
+            onClick={() => save(value)}
+            disabled={!isSignedIn || isPending || !isDirty(value)}
+            className="
+              mx-1 rounded-sm border border-secondary bg-zinc-200 px-2 py-1 text-black
+              transition-all
+              enabled:cursor-pointer
+              hover:enabled:bg-zinc-50 hover:enabled:text-zinc-900
+              disabled:cursor-not-allowed disabled:opacity-40
+              dark:bg-zinc-950 dark:text-zinc-400
+              dark:hover:enabled:bg-zinc-900 dark:hover:enabled:text-white
+            "
           >
-            JSON
+            {isPending ? t('saving') : t('save')}
           </button>
-          <button
-            type="button"
-            aria-pressed={format === 'yaml'}
-            onClick={() => handleFormatToggle('yaml')}
-            className={`
-              cursor-pointer rounded-sm px-3 py-1 transition-all
-              ${
-                format === 'yaml'
-                  ? `
-                    bg-white text-black shadow-sm
-                    dark:bg-zinc-700 dark:text-white
-                  `
-                  : `
-                    text-zinc-600
-                    hover:text-zinc-900
-                    dark:text-zinc-400
-                  `
-              }
-            `}
+
+          <div
+            className="
+              flex rounded-md bg-zinc-200 p-0.5
+              dark:bg-zinc-800
+            "
           >
-            YAML
-          </button>
+            <button
+              type="button"
+              aria-pressed={format === 'json'}
+              onClick={() => handleFormatToggle('json')}
+              className={`
+                cursor-pointer rounded-sm px-3 py-1 transition-all
+                ${
+                  format === 'json'
+                    ? `
+                      bg-white text-black shadow-sm
+                      dark:bg-zinc-700 dark:text-white
+                    `
+                    : `
+                      text-zinc-600
+                      hover:text-zinc-900
+                      dark:text-zinc-400
+                    `
+                }
+              `}
+            >
+              JSON
+            </button>
+            <button
+              type="button"
+              aria-pressed={format === 'yaml'}
+              onClick={() => handleFormatToggle('yaml')}
+              className={`
+                cursor-pointer rounded-sm px-3 py-1 transition-all
+                ${
+                  format === 'yaml'
+                    ? `
+                      bg-white text-black shadow-sm
+                      dark:bg-zinc-700 dark:text-white
+                    `
+                    : `
+                      text-zinc-600
+                      hover:text-zinc-900
+                      dark:text-zinc-400
+                    `
+                }
+              `}
+            >
+              YAML
+            </button>
+          </div>
         </div>
       </div>
 
