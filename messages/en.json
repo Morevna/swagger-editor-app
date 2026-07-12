@@ -133,5 +133,22 @@
   "ErrorHistory": {
     "message": "Something went wrong!",
     "button": "Try again"
+  },
+  "About": {
+    "title": "About This Project",
+    "description": "This application was built as part of the RS School React course. It enables you to edit OpenAPI 3.0 specifications and test APIs directly from your browser.",
+    "team": "Our Team",
+    "technologies": "Technologies",
+    "links": "Links",
+    "members": {
+      "alexander": "Alexander",
+      "maxim": "Maxim",
+      "maria": "Maria"
+    },
+
+    "roles": {
+      "teamLeadDeveloper": "Team Lead & Developer",
+      "developer": "Developer"
+    }
   }
 }
