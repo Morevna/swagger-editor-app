@@ -1,3 +1,3 @@
-export function byteSize(input: string) {
-  return new TextEncoder().encode(input).length;
+export function byteSize(str: string): number {
+  return new TextEncoder().encode(str).length;
 }

@@ -84,7 +84,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
       accessorKey: 'responseSize',
       header: t('responseSize'),
       cell: ({ row }) => {
-        const responseSize = row.getValue('requestSize') as number;
+        const responseSize = row.getValue('responseSize') as number;
         return formatSize(responseSize);
       },
     },

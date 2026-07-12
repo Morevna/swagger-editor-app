@@ -52,6 +52,7 @@ describe('executeApiRequest Server Action', () => {
       status: 200,
       headers: { 'content-type': 'application/json' },
       body: '{"data": "success"}',
+      errorDetails: null,
     });
   });
 
