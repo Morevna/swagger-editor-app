@@ -26,6 +26,12 @@ const eslintConfig = defineConfig([
     },
     rules: { 'better-tailwindcss/enforce-consistent-line-wrapping': ['warn', { printWidth: 100 }] },
   },
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
   prettier,
 ]);
 
