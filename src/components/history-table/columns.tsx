@@ -26,15 +26,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
       cell: ({ row }) => {
         const method = row.getValue('method') as Method;
         const styles = METHOD_COLORS[method];
-        return (
-          <Badge
-            className={`
-              ${styles}
-            `}
-          >
-            {method}
-          </Badge>
-        );
+        return <Badge className={styles}>{method}</Badge>;
       },
     },
     {
@@ -53,15 +45,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
         const status = row.getValue('status') as number;
         const group = getStatusGroup(status);
         const styles = STATUS_GROUP_COLORS[group];
-        return (
-          <Badge
-            className={`
-              ${styles}
-            `}
-          >
-            {status}
-          </Badge>
-        );
+        return <Badge className={styles}>{status}</Badge>;
       },
     },
     {

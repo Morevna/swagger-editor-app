@@ -21,4 +21,4 @@ export type MethodFilter = Method | 'allMethods';
 
 export type StatusFilter = StatusGroup | 'allStatuses';
 
-export type FilterValue = DateFilter | MethodFilter;
+export type FilterValue = DateFilter | MethodFilter | StatusFilter;
