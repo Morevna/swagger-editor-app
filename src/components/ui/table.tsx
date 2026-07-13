@@ -88,6 +88,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
         `
           px-3 py-5 align-middle
           has-[[role=checkbox]]:pr-0
+          max-w-50
         `,
         className
       )}

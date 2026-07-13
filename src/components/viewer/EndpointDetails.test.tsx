@@ -3,9 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import EndpointDetails from './EndpointDetails';
 import { Operation, ApiErrorCode } from './types';
 import { executeApiRequest } from '@/lib/actions/makeApiRequest';
+import { executeAndLogRequest } from '@/lib/actions/executeAndLogRequest';
 
 vi.mock('@/lib/actions/makeApiRequest', () => ({
   executeApiRequest: vi.fn(),
+}));
+
+vi.mock('@/lib/actions/executeAndLogRequest', () => ({
+  executeAndLogRequest: vi.fn(),
 }));
 
 vi.mock('next-intl', () => ({
@@ -146,13 +151,13 @@ describe('EndpointDetails Component', () => {
       headers: { 'content-type': 'application/json' },
       body: '{"status":"ok"}',
     };
-    vi.mocked(executeApiRequest).mockResolvedValueOnce(mockProxyResponse);
+    vi.mocked(executeAndLogRequest).mockResolvedValueOnce(mockProxyResponse);
 
     const executeButton = screen.getByRole('button', { name: 'Execute' });
     fireEvent.click(executeButton);
 
     await waitFor(() => {
-      expect(executeApiRequest).toHaveBeenCalledWith({
+      expect(executeAndLogRequest).toHaveBeenCalledWith({
         url: 'https://api.test.com/items/123?search=test-query',
         method: 'get',
         headers: {
@@ -195,7 +200,7 @@ describe('EndpointDetails Component', () => {
       headers: {},
       body: '',
     };
-    vi.mocked(executeApiRequest).mockResolvedValueOnce(mockEmptyBodyResponse);
+    vi.mocked(executeAndLogRequest).mockResolvedValueOnce(mockEmptyBodyResponse);
 
     render(<EndpointDetails {...defaultProps} />);
 
@@ -203,7 +208,7 @@ describe('EndpointDetails Component', () => {
     fireEvent.click(executeButton);
 
     await waitFor(() => {
-      expect(executeApiRequest).toHaveBeenCalled();
+      expect(executeAndLogRequest).toHaveBeenCalled();
     });
   });
 
@@ -214,7 +219,7 @@ describe('EndpointDetails Component', () => {
       headers: { 'content-type': 'text/plain' },
       body: 'Plain text response from target server',
     };
-    vi.mocked(executeApiRequest).mockResolvedValueOnce(mockPlainResponse);
+    vi.mocked(executeAndLogRequest).mockResolvedValueOnce(mockPlainResponse);
 
     render(<EndpointDetails {...defaultProps} />);
 
@@ -222,7 +227,7 @@ describe('EndpointDetails Component', () => {
     fireEvent.click(executeButton);
 
     await waitFor(() => {
-      expect(executeApiRequest).toHaveBeenCalled();
+      expect(executeAndLogRequest).toHaveBeenCalled();
     });
   });
 
@@ -242,7 +247,7 @@ describe('EndpointDetails Component', () => {
       body: 'FETCH_FAILED',
       errorCode: 'FETCH_FAILED' as ApiErrorCode,
     };
-    vi.mocked(executeApiRequest).mockResolvedValueOnce(mockErrorResponse);
+    vi.mocked(executeAndLogRequest).mockResolvedValueOnce(mockErrorResponse);
 
     render(<EndpointDetails {...defaultProps} />);
 
@@ -250,12 +255,12 @@ describe('EndpointDetails Component', () => {
     fireEvent.click(executeButton);
 
     await waitFor(() => {
-      expect(executeApiRequest).toHaveBeenCalled();
+      expect(executeAndLogRequest).toHaveBeenCalled();
     });
   });
 
   it('should handle critical invocation errors inside executeApiRequest', async () => {
-    vi.mocked(executeApiRequest).mockRejectedValueOnce(new Error('Network Error'));
+    vi.mocked(executeAndLogRequest).mockRejectedValueOnce(new Error('Network Error'));
 
     render(<EndpointDetails {...defaultProps} />);
 
@@ -263,7 +268,7 @@ describe('EndpointDetails Component', () => {
     fireEvent.click(executeButton);
 
     await waitFor(() => {
-      expect(executeApiRequest).toHaveBeenCalled();
+      expect(executeAndLogRequest).toHaveBeenCalled();
     });
   });
 

@@ -12,6 +12,7 @@ import { LogEntry, Method } from '@/types/logs';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import { Badge } from '../ui/badge';
 
 export const useColumns = (): ColumnDef<LogEntry>[] => {
   const t = useTranslations('HistoryPage');
@@ -25,16 +26,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
       cell: ({ row }) => {
         const method = row.getValue('method') as Method;
         const styles = METHOD_COLORS[method];
-        return (
-          <span
-            className={`
-              font-bold
-              ${styles}
-            `}
-          >
-            {method}
-          </span>
-        );
+        return <Badge className={styles}>{method}</Badge>;
       },
     },
     {
@@ -53,16 +45,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
         const status = row.getValue('status') as number;
         const group = getStatusGroup(status);
         const styles = STATUS_GROUP_COLORS[group];
-        return (
-          <span
-            className={`
-              font-bold
-              ${styles}
-            `}
-          >
-            {status}
-          </span>
-        );
+        return <Badge className={styles}>{status}</Badge>;
       },
     },
     {
@@ -85,7 +68,7 @@ export const useColumns = (): ColumnDef<LogEntry>[] => {
       accessorKey: 'responseSize',
       header: t('responseSize'),
       cell: ({ row }) => {
-        const responseSize = row.getValue('requestSize') as number;
+        const responseSize = row.getValue('responseSize') as number;
         return formatSize(responseSize);
       },
     },

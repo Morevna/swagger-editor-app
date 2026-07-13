@@ -1,6 +1,9 @@
 'use client';
 
+import { METHOD_COLORS } from '@/constants/columnsStyles';
+import { Badge } from '../ui/badge';
 import { PathItem } from './types';
+import { Method } from '@/types/logs';
 
 interface EndpointListProps {
   paths: Record<string, PathItem>;
@@ -10,16 +13,6 @@ interface EndpointListProps {
 }
 
 const METHODS = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head'] as const;
-
-const methodColors: Record<string, string> = {
-  get: 'bg-emerald-100 text-emerald-700',
-  post: 'bg-blue-100 text-blue-700',
-  put: 'bg-amber-100 text-amber-700',
-  patch: 'bg-violet-100 text-violet-700',
-  delete: 'bg-red-100 text-red-700',
-  options: 'bg-zinc-100 text-zinc-700',
-  head: 'bg-zinc-100 text-zinc-700',
-};
 
 export default function EndpointList({
   paths,
@@ -36,6 +29,8 @@ export default function EndpointList({
           <div className="space-y-2">
             {METHODS.map((method) => {
               if (!item[method]) return null;
+
+              const badgeColor = METHOD_COLORS[method.toUpperCase() as Method];
 
               const active = selectedPath === path && selectedMethod === method;
 
@@ -57,14 +52,13 @@ export default function EndpointList({
                     }
                   `}
                 >
-                  <span
+                  <Badge
                     className={`
-                      rounded-sm px-2 py-1 text-xs font-semibold uppercase
-                      ${methodColors[method]}
+                      ${badgeColor}
                     `}
                   >
                     {method}
-                  </span>
+                  </Badge>
 
                   <span className="ml-3 flex-1 text-sm">{path}</span>
                 </button>
