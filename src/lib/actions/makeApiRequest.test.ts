@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { executeApiRequest } from './makeApiRequest';
-import { API_ERROR_CODES } from '../../components/viewer/types';
+import { API_ERROR_CODES } from '@/components/viewer/types';
 
-const globalFetch = vi.fn();
+const globalFetch = vi.fn<typeof fetch>();
+
 vi.stubGlobal('fetch', globalFetch);
 
 describe('executeApiRequest Server Action', () => {
@@ -25,13 +26,14 @@ describe('executeApiRequest Server Action', () => {
   });
 
   it('should successfully execute GET request and pass headers', async () => {
-    const mockHeaders = new Map([['content-type', 'application/json']]);
-    globalFetch.mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      headers: mockHeaders,
-      text: async () => '{"data": "success"}',
-    });
+    globalFetch.mockResolvedValueOnce(
+      new Response('{"data": "success"}', {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+        },
+      })
+    );
 
     const result = await executeApiRequest({
       url: 'https://api.example.com/test',
@@ -57,12 +59,11 @@ describe('executeApiRequest Server Action', () => {
   });
 
   it('should automatically add Content-Type and serialize body for POST requests', async () => {
-    globalFetch.mockResolvedValueOnce({
-      ok: true,
-      status: 201,
-      headers: new Map(),
-      text: async () => 'created',
-    });
+    globalFetch.mockResolvedValueOnce(
+      new Response('created', {
+        status: 201,
+      })
+    );
 
     const result = await executeApiRequest({
       url: 'https://api.example.com/test',
@@ -72,20 +73,18 @@ describe('executeApiRequest Server Action', () => {
 
     const [, options] = globalFetch.mock.calls[0];
 
-    expect(options.method).toBe('POST');
-    expect(options.headers.get('Content-Type')).toBe('application/json');
-    expect(options.body).toBe('{"foo":"bar"}');
+    expect(options?.method).toBe('POST');
+    expect(options?.headers).toBeInstanceOf(Headers);
 
+    const headers = options?.headers as Headers;
+
+    expect(headers.get('Content-Type')).toBe('application/json');
+    expect(options?.body).toBe('{"foo":"bar"}');
     expect(result.success).toBe(true);
   });
 
   it('should not overwrite existing Content-Type and should accept body as a string', async () => {
-    globalFetch.mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      headers: new Map(),
-      text: async () => 'ok',
-    });
+    globalFetch.mockResolvedValueOnce(new Response('ok'));
 
     await executeApiRequest({
       url: 'https://api.example.com/test',
@@ -95,19 +94,21 @@ describe('executeApiRequest Server Action', () => {
     });
 
     const [, options] = globalFetch.mock.calls[0];
-    expect(options.headers.get('Content-Type')).toBe('text/plain');
-    expect(options.body).toBe('plain-string-body');
+
+    expect(options?.headers).toBeInstanceOf(Headers);
+
+    const headers = options?.headers as Headers;
+
+    expect(headers.get('Content-Type')).toBe('text/plain');
+    expect(options?.body).toBe('plain-string-body');
   });
 
   it('should handle response body read error', async () => {
-    globalFetch.mockResolvedValueOnce({
-      ok: true,
-      status: 200,
-      headers: new Map(),
-      text: async () => {
-        throw new Error('Read stream error');
-      },
-    });
+    const response = new Response();
+
+    vi.spyOn(response, 'text').mockRejectedValueOnce(new Error('Read stream error'));
+
+    globalFetch.mockResolvedValueOnce(response);
 
     const result = await executeApiRequest({
       url: 'https://api.example.com/test',

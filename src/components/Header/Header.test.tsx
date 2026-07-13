@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import type { ComponentProps, ReactNode } from 'react';
 import Header from './Header';
 import { createClient } from '@/lib/supabase/server';
 
@@ -14,8 +15,13 @@ vi.mock('@/lib/actions/auth', () => ({
   signOutAction: vi.fn(),
 }));
 
+type MockLinkProps = Omit<ComponentProps<'a'>, 'href'> & {
+  href: string | { pathname: string };
+  children: ReactNode;
+};
+
 vi.mock('@/i18n/navigation', () => ({
-  Link: ({ href, children, ...props }: any) => (
+  Link: ({ href, children, ...props }: MockLinkProps) => (
     <a href={typeof href === 'string' ? href : href.pathname} {...props}>
       {children}
     </a>
@@ -27,15 +33,21 @@ vi.mock('@/components/LanguageSwitcher/LanguageSwitcher', () => ({
 }));
 
 vi.mock('./StickyHeaderShell', () => ({
-  StickyHeaderShell: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  StickyHeaderShell: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
+type SupabaseClient = Awaited<ReturnType<typeof createClient>>;
+
 function mockAuth(claims: object | null) {
-  vi.mocked(createClient).mockResolvedValue({
+  const client = {
     auth: {
-      getClaims: vi.fn().mockResolvedValue({ data: { claims } }),
+      getClaims: vi.fn().mockResolvedValue({
+        data: { claims },
+      }),
     },
-  } as any);
+  } as unknown as SupabaseClient;
+
+  vi.mocked(createClient).mockResolvedValue(client);
 }
 
 describe('Header', () => {
