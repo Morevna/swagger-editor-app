@@ -1,6 +1,12 @@
 import { render, screen } from '@testing-library/react';
+import type { ImgHTMLAttributes } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import AboutView from './AboutView';
+
+type MockImageProps = Pick<
+  ImgHTMLAttributes<HTMLImageElement>,
+  'src' | 'alt' | 'width' | 'height' | 'className'
+>;
 
 vi.mock('next-intl/server', () => ({
   getTranslations: vi.fn(() =>
@@ -25,7 +31,7 @@ vi.mock('next-intl/server', () => ({
 }));
 
 vi.mock('next/image', () => ({
-  default: ({ src, alt, width, height, className }: any) => (
+  default: ({ src, alt, width, height, className }: MockImageProps) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} width={width} height={height} className={className} />
   ),
