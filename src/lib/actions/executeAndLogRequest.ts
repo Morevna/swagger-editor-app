@@ -25,7 +25,7 @@ export async function executeAndLogRequest(args: ProxyRequestArgs): Promise<Prox
   const requestSize = estimateRequestSize(args);
   const responseSize = estimateResponseSize(result);
 
-  await supabase.from('user_history').insert({
+  const { error } = await supabase.from('user_history').insert({
     uid: user.id,
     method: args.method.toUpperCase(),
     endpoint: args.url,
@@ -36,6 +36,10 @@ export async function executeAndLogRequest(args: ProxyRequestArgs): Promise<Prox
     errorDetails: result.errorDetails,
     time: startedAtIso,
   });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 
   return result;
 }
