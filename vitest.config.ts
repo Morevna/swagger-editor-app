@@ -28,6 +28,8 @@ export default defineConfig({
         'src/app/**',
         'src/middleware.ts',
         'src/components/ui/**',
+        'src/constants/**',
+        'src/i18n/**',
       ],
     },
   },

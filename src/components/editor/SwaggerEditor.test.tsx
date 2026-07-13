@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import SwaggerEditor from './SwaggerEditor';
+import SwaggerEditor, { SwaggerEditorProps } from './SwaggerEditor';
+import useSaveSpec from '@/lib/hooks/useSaveSpec';
 
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
@@ -27,6 +28,16 @@ vi.mock('@monaco-editor/react', () => {
   };
 });
 
+vi.mock('@/lib/hooks/useSaveSpec');
+const mockedUseSaveSpec = vi.mocked(useSaveSpec);
+
+const defaultSaveState = {
+  save: vi.fn(),
+  isPending: false,
+  saveError: null,
+  isDirty: vi.fn().mockReturnValue(true),
+};
+
 type ParseResult = { data: unknown; error: string | null };
 type ValidateResult = string | null;
 type Format = 'json' | 'yaml';
@@ -48,11 +59,22 @@ vi.mock('../../lib/editor-utils', () => ({
   convertFormat: (t: string, f: Format) => convertFormat(t, f),
 }));
 
-describe('SwaggerEditor – full coverage suite', () => {
-  const onSchemaChange = vi.fn();
+const onSchemaChange = vi.fn();
 
+const renderSwaggerEditor = (overwrite?: Partial<SwaggerEditorProps>) => {
+  const props = {
+    onSchemaChange: onSchemaChange,
+    initialSchema: 'test',
+    isSignedIn: true,
+    ...overwrite,
+  };
+  return render(<SwaggerEditor {...props} />);
+};
+
+describe('SwaggerEditor – full coverage suite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockedUseSaveSpec.mockReturnValue(defaultSaveState);
 
     detectFormat.mockReturnValue('json');
     parseSchema.mockReturnValue({ data: {}, error: null });
@@ -60,15 +82,17 @@ describe('SwaggerEditor – full coverage suite', () => {
   });
 
   it('renders the initial state without errors', () => {
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    const testSpec = '{"openapi":"3.0.0"}';
+    renderSwaggerEditor({ initialSchema: testSpec });
 
     expect(screen.getByText('title')).toBeInTheDocument();
     expect(screen.getByTestId('editor-valid')).toBeInTheDocument();
     expect(screen.getByText('noErrors')).toBeInTheDocument();
+    expect(screen.getByTestId('monaco-editor')).toHaveValue(testSpec);
   });
 
   it('processes valid JSON input', () => {
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    renderSwaggerEditor();
 
     const editor = screen.getByTestId('monaco-editor');
 
@@ -86,7 +110,7 @@ describe('SwaggerEditor – full coverage suite', () => {
       error: 'PARSE_ERROR',
     });
 
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    renderSwaggerEditor();
 
     fireEvent.change(screen.getByTestId('monaco-editor'), {
       target: { value: '{ broken' },
@@ -105,7 +129,7 @@ describe('SwaggerEditor – full coverage suite', () => {
 
     validateSchema.mockReturnValue('MISSING_INFO');
 
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    renderSwaggerEditor();
 
     fireEvent.change(screen.getByTestId('monaco-editor'), {
       target: { value: '{"openapi":"3.0.0"}' },
@@ -121,7 +145,7 @@ describe('SwaggerEditor – full coverage suite', () => {
       result: 'openapi: 3.0.0',
     });
 
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    renderSwaggerEditor();
 
     fireEvent.click(screen.getByRole('button', { name: 'YAML' }));
 
@@ -133,7 +157,7 @@ describe('SwaggerEditor – full coverage suite', () => {
   });
 
   it('handles empty input (clearing the editor)', () => {
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    renderSwaggerEditor();
 
     fireEvent.change(screen.getByTestId('monaco-editor'), {
       target: { value: '' },
@@ -148,7 +172,7 @@ describe('SwaggerEditor – full coverage suite', () => {
       result: '',
     });
 
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    renderSwaggerEditor();
 
     fireEvent.click(screen.getByRole('button', { name: 'YAML' }));
 
@@ -157,10 +181,22 @@ describe('SwaggerEditor – full coverage suite', () => {
   });
 
   it('Does not switch the format if the same one is selected.', () => {
-    render(<SwaggerEditor onSchemaChange={onSchemaChange} />);
+    renderSwaggerEditor();
 
     fireEvent.click(screen.getByRole('button', { name: 'JSON' }));
 
     expect(convertFormat).not.toHaveBeenCalled();
+  });
+
+  it('has enabled save button when authenticated', () => {
+    renderSwaggerEditor({ isSignedIn: true });
+
+    expect(screen.getByRole('button', { name: 'save' })).toBeEnabled();
+  });
+
+  it('has disabled save button when unauthenticated', () => {
+    renderSwaggerEditor({ isSignedIn: false });
+
+    expect(screen.getByRole('button', { name: 'save' })).toBeDisabled();
   });
 });

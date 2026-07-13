@@ -1,44 +1,15 @@
-'use client';
+import { getSpec } from '@/lib/supabase/getSpec';
+import DEFAULT_SPEC_TEXT from '@/constants/default-spec-text';
+import HomeView from '@/components/HomeView/HomeView';
+import { createClient } from '@/lib/supabase/server';
 
-import { useState, useCallback } from 'react';
-import SwaggerEditor from '@/components/editor/SwaggerEditor';
-import SwaggerViewer from '@/components/viewer/SwaggerViewer';
-import { OpenApiSchema } from '@/components/viewer/types';
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const savedSpec = user ? await getSpec(supabase, user.id) : null;
+  const isSignedIn = Boolean(user);
 
-export default function Home() {
-  const [schema, setSchema] = useState<OpenApiSchema | null>(null);
-  const handleSchemaChange = useCallback((parsedData: OpenApiSchema | null) => {
-    setSchema(parsedData);
-  }, []);
-
-  return (
-    <div
-      className="
-        flex min-h-0 flex-1 flex-col bg-zinc-50
-        dark:bg-black
-      "
-    >
-      <div
-        className="
-          flex min-h-0 flex-1 gap-6 p-6
-          portrait:flex-col
-          landscape:flex-row
-        "
-      >
-        <div className="flex min-h-0 flex-1">
-          <SwaggerEditor onSchemaChange={handleSchemaChange} />
-        </div>
-
-        <div
-          className="
-            flex min-h-0 flex-1 flex-col overflow-y-auto rounded-lg border border-zinc-200 bg-white
-            p-4
-            dark:border-zinc-800 dark:bg-zinc-950
-          "
-        >
-          <SwaggerViewer schema={schema} />
-        </div>
-      </div>
-    </div>
-  );
+  return <HomeView initialSpec={savedSpec ?? DEFAULT_SPEC_TEXT} isSignedIn={isSignedIn} />;
 }
