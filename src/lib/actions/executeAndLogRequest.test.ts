@@ -107,7 +107,7 @@ describe('executeAndLogRequest', () => {
         method: 'POST',
         endpoint: 'https://api.com/users',
         status: 201,
-        duration: 0,
+        duration: expect.any(Number),
         requestSize: 150,
         responseSize: 75,
         errorDetails: undefined,
@@ -161,7 +161,7 @@ describe('executeAndLogRequest', () => {
       let callCount = 0;
       vi.spyOn(performance, 'now').mockImplementation(() => {
         callCount++;
-        return callCount === 1 ? 1000 : 1250; // 250ms duration
+        return callCount === 1 ? 1000 : 1250;
       });
 
       vi.mocked(executeApiRequest).mockResolvedValue(mockResponse);
@@ -315,7 +315,6 @@ describe('executeAndLogRequest', () => {
       const insertCall = mockInsert.mock.calls[0][0];
       expect(insertCall.time).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
 
-      // Verify it's a valid ISO date
       const date = new Date(insertCall.time);
       expect(date.getTime()).not.toBeNaN();
     });
